@@ -34,8 +34,8 @@ public class SummonMessage {
 				ServerLevel level = player.serverLevel();
 
 				Entity mob = level.getEntity(mobUUID);
+				CallData callData = CallData.get(player.level());
 				if (mob == null) {
-					CallData callData = CallData.get(player.level());
 					List<CallData.TamedData> tamedList = callData.getTamedData(player.getUUID());
 					CallData.TamedData matchingData = null;
 					for (CallData.TamedData data : tamedList) {
@@ -52,7 +52,9 @@ public class SummonMessage {
 					}
 				} else {
 					mob.teleportTo(player.getX(), player.getY(), player.getZ());
+					callData.updateData(mob.getUUID(), mob);
 				}
+				callData.syncData(player.getUUID());
 			}
 		});
 		ctx.setPacketHandled(true);

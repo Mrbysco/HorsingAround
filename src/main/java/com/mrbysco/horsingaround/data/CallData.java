@@ -18,6 +18,7 @@ import net.minecraftforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public class CallData extends SavedData {
@@ -87,6 +88,8 @@ public class CallData extends SavedData {
 			CompoundTag data = entity.saveWithoutId(tamedData.tag());
 			data.putString("id", EntityType.getKey(entity.getType()).toString());
 		});
+
+		setDirty();
 	}
 
 	public void syncData(UUID playerUUID) {
@@ -95,6 +98,17 @@ public class CallData extends SavedData {
 		saveList(tag, playerUUID, tamedDataList);
 
 		PacketHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new SyncDataMessage(playerUUID, tag));
+	}
+
+	public void syncData() {
+		Set<UUID> players = playerTamedMap.keySet();
+		for (UUID playerUUID : players) {
+			List<TamedData> tamedDataList = playerTamedMap.get(playerUUID);
+			CompoundTag tag = new CompoundTag();
+			saveList(tag, playerUUID, tamedDataList);
+
+			PacketHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new SyncDataMessage(playerUUID, tag));
+		}
 	}
 
 	public static CallData load(CompoundTag tag) {
