@@ -11,6 +11,9 @@ public class HorsingLanguageProvider extends LanguageProvider {
 
 	@Override
 	protected void addTranslations() {
+		add("key.horsingaround.category", "Horsing Around");
+		add("key.horsingaround.open_menu", "Open Call Menu");
+
 		add("message.horsingaround.no_tamed_entities", "You don't have any tamed entities added to your list");
 	}
 }

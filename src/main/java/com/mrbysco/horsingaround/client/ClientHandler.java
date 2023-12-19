@@ -17,7 +17,13 @@ import java.util.List;
 public class ClientHandler {
 	public static final List<CallData.TamedData> tamedList = new ArrayList<>();
 
-	public static void onRenderOverlay(RenderGuiOverlayEvent.Post event) {
+	public static void onRenderOverlayPre(RenderGuiOverlayEvent.Pre event) {
+		if (Minecraft.getInstance().screen instanceof GuiRadialMenu<?> && event.getOverlay() == VanillaGuiOverlay.CROSSHAIR.type()) {
+			event.setCanceled(true);
+		}
+	}
+
+	public static void onRenderOverlayPost(RenderGuiOverlayEvent.Post event) {
 		if (!event.getOverlay().id().equals(new ResourceLocation("mount_health"))) return;
 		Minecraft mc = Minecraft.getInstance();
 		if (!(mc.gui instanceof ForgeGui gui)) return;
@@ -33,12 +39,6 @@ public class ClientHandler {
 
 			gui.setupOverlayRenderState(true, false);
 			gui.renderFood(width, height, guiGraphics);
-		}
-	}
-
-	public static void overlayEvent(RenderGuiOverlayEvent.Pre event) {
-		if (Minecraft.getInstance().screen instanceof GuiRadialMenu<?> && event.getOverlay() == VanillaGuiOverlay.CROSSHAIR.type()) {
-			event.setCanceled(true);
 		}
 	}
 }
