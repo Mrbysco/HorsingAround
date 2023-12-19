@@ -82,6 +82,13 @@ public class CallData extends SavedData {
 		return playerTamedMap.values().stream().anyMatch(tamedData -> tamedData.uuid().equals(uuid));
 	}
 
+	public void updateData(UUID uuid, Entity entity) {
+		playerTamedMap.values().stream().filter(tamedData -> tamedData.uuid().equals(uuid)).findFirst().ifPresent(tamedData -> {
+			CompoundTag data = entity.saveWithoutId(tamedData.tag());
+			data.putString("id", EntityType.getKey(entity.getType()).toString());
+		});
+	}
+
 	public void syncData(UUID playerUUID) {
 		List<TamedData> tamedDataList = playerTamedMap.get(playerUUID);
 		CompoundTag tag = new CompoundTag();
