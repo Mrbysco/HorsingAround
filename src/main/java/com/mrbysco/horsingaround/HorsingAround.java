@@ -6,6 +6,7 @@ import com.mrbysco.horsingaround.client.KeybindHandler;
 import com.mrbysco.horsingaround.handler.SyncHandler;
 import com.mrbysco.horsingaround.handler.TameHandler;
 import com.mrbysco.horsingaround.network.PacketHandler;
+import com.mrbysco.horsingaround.registry.HorsingRegistry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -28,6 +29,8 @@ public class HorsingAround {
 
 	public HorsingAround() {
 		IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+
+		HorsingRegistry.SOUND_EVENTS.register(eventBus);
 
 		eventBus.addListener(this::commonSetup);
 

@@ -1,0 +1,8 @@
+{
+  "call": {
+    "sounds": [
+      "horsingaround:whistle"
+    ],
+    "subtitle": "horsingaround.subtitle.call"
+  }
+}

@@ -4,6 +4,7 @@ import com.mrbysco.horsingaround.HorsingAround;
 import com.mrbysco.horsingaround.config.HorsingConfig;
 import com.mrbysco.horsingaround.data.CallData;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.OwnableEntity;
@@ -20,8 +21,8 @@ public class TameHandler {
 
 	@SubscribeEvent
 	public void onMount(EntityMountEvent event) {
-		if (event.isMounting() && HorsingConfig.COMMON.addOnMount.get()) {
-			if (event.getEntityMounting() instanceof Player player && !player.level().isClientSide) {
+		if (event.isMounting()) {
+			if (event.getEntityMounting() instanceof Player player && !player.level().isClientSide && HorsingConfig.COMMON.addOnMount.get()) {
 				Entity mountedEntity = event.getEntityBeingMounted();
 				if (mountedEntity instanceof OwnableEntity ownableEntity &&
 						ownableEntity.getOwnerUUID() != null && ownableEntity.getOwnerUUID().equals(player.getUUID())) {
@@ -47,6 +48,9 @@ public class TameHandler {
 
 				if (!player.getAbilities().instabuild)
 					stack.shrink(1);
+
+				event.setCanceled(true);
+				event.setCancellationResult(InteractionResult.CONSUME);
 			}
 		}
 	}

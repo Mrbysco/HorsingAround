@@ -118,8 +118,8 @@ public class GuiRadialMenu<T> extends Screen {
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
 
-		Tesselator tessellator = Tesselator.getInstance();
-		BufferBuilder buffer = tessellator.getBuilder();
+		Tesselator tesselator = Tesselator.getInstance();
+		BufferBuilder buffer = tesselator.getBuilder();
 		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 		boolean hasMouseOver = false;
 		int mousedOverSlot = -1;
@@ -148,7 +148,7 @@ public class GuiRadialMenu<T> extends Screen {
 				drawSlice(buffer, centerOfScreenX, centerOfScreenY, 10, radiusIn, radiusOut, sliceBorderLeft, sliceBorderRight, 0, 0, 0, 64);
 		}
 
-		tessellator.end();
+		tesselator.end();
 		RenderSystem.disableBlend();
 		if (hasMouseOver && mousedOverSlot != -1) {
 			int adjusted = ((mousedOverSlot + (numberOfSlices / 2 + 1)) % numberOfSlices) - 1;
@@ -161,13 +161,12 @@ public class GuiRadialMenu<T> extends Screen {
 			ItemStack stack = new ItemStack(Blocks.DIRT);
 			float angle1 = ((i / (float) numberOfSlices) - 0.25f) * 2 * (float) Math.PI;
 			if (numberOfSlices % 2 != 0) {
-				angle1 += Math.PI / numberOfSlices;
+				angle1 += (float) (Math.PI / numberOfSlices);
 			}
 			float posX = centerOfScreenX - 8 + itemRadius * (float) Math.cos(angle1);
 			float posY = centerOfScreenY - 8 + itemRadius * (float) Math.sin(angle1);
 			RenderSystem.disableDepthTest();
 
-//            graphics.renderItem(new ItemStack(Items.DIAMOND_PICKAXE), (int) posX, (int) posY);
 			T primarySlotIcon = radialMenuSlots.get(i).primarySlotIcon();
 			List<T> secondarySlotIcons = radialMenuSlots.get(i).secondarySlotIcons();
 			if (primarySlotIcon != null) {

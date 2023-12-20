@@ -1,10 +1,12 @@
 package com.mrbysco.horsingaround.network.message;
 
 import com.mrbysco.horsingaround.data.CallData;
+import com.mrbysco.horsingaround.registry.HorsingRegistry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent.Context;
 
 import java.util.List;
@@ -55,6 +57,9 @@ public class SummonMessage {
 					callData.updateData(mob.getUUID(), mob);
 				}
 				callData.syncData(player.getUUID());
+
+				level.playSound((Player) null, player.blockPosition(), HorsingRegistry.CALL.get(), player.getSoundSource(),
+						1.0F, 1.0F + (level.random.nextFloat() - level.random.nextFloat()) * 0.4F);
 			}
 		});
 		ctx.setPacketHandled(true);

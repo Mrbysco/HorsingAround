@@ -24,8 +24,9 @@ public class RenderHelper {
 		poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
 		// Rotate entity
 		poseStack.mulPose(Axis.XP.rotationDegrees(((float) Math.atan((-40 / 40.0F))) * 10.0F));
-		tamedEntity.yHeadRot = tamedEntity.getYRot();
-		tamedEntity.yHeadRotO = tamedEntity.getYRot();
+		tamedEntity.yHeadRot = 45;
+		tamedEntity.yHeadRotO = 45;
+		tamedEntity.yBodyRot = 45;
 
 		poseStack.translate(0.0F, tamedEntity.getMyRidingOffset(), 0.0F);
 		EntityRenderDispatcher entityRenderDispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
