@@ -8,6 +8,9 @@ A mod that adds multiple additions to the game related to tamed animals.
 * The ability to see your hunger while riding a horse or other mountable animal.
 * The ability to link a tamed animal to the player to allow teleporting it to you.
 
+## Credits ##
+The whistle sound is by [Owlish Media](https://freesound.org/people/OwlStorm/sounds/320140/)
+
 ## License ##
 * Horsing Around is licensed under the MIT License
   - (c) 2023 Mrbysco, ShyNieke
