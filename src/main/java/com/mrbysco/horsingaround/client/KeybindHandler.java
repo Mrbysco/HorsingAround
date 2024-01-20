@@ -7,17 +7,17 @@ import com.mrbysco.horsingaround.client.gui.radial_menu.GuiRadialMenu;
 import com.mrbysco.horsingaround.client.gui.radial_menu.RadialMenu;
 import com.mrbysco.horsingaround.client.gui.radial_menu.RadialMenuSlot;
 import com.mrbysco.horsingaround.data.CallData;
-import com.mrbysco.horsingaround.network.PacketHandler;
-import com.mrbysco.horsingaround.network.message.SummonMessage;
-import com.mrbysco.horsingaround.network.message.UnlinkMessage;
+import com.mrbysco.horsingaround.network.message.SummonPayload;
+import com.mrbysco.horsingaround.network.message.UnlinkPayload;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.client.event.InputEvent;
+import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
@@ -59,9 +59,9 @@ public class KeybindHandler {
 					ClientData data = stackList.get(id);
 					if (Screen.hasShiftDown()) {
 						//Remove entity from list
-						PacketHandler.CHANNEL.sendToServer(new UnlinkMessage(data.data().uuid()));
+						PacketDistributor.SERVER.noArg().send(new UnlinkPayload(data.data().uuid()));
 					} else {
-						PacketHandler.CHANNEL.sendToServer(new SummonMessage(data.data().uuid()));
+						PacketDistributor.SERVER.noArg().send(new SummonPayload(data.data().uuid()));
 					}
 				}, slots, RenderHelper::drawTamedEntities, 0)));
 			}

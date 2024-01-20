@@ -28,7 +28,7 @@ public class RenderHelper {
 		tamedEntity.yHeadRotO = 45;
 		tamedEntity.yBodyRot = 45;
 
-		poseStack.translate(0.0F, tamedEntity.getMyRidingOffset(), 0.0F);
+		poseStack.translate(0.0F, tamedEntity.getMyRidingOffset(tamedEntity), 0.0F);
 		EntityRenderDispatcher entityRenderDispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
 		entityRenderDispatcher.overrideCameraOrientation(new Quaternionf(0.0F, 0.0F, 0.0F, 1.0F));
 		entityRenderDispatcher.setRenderShadow(false);

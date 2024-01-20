@@ -4,8 +4,8 @@ import com.mrbysco.horsingaround.HorsingAround;
 import com.mrbysco.horsingaround.registry.HorsingRegistry;
 import net.minecraft.data.PackOutput;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraftforge.common.data.LanguageProvider;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.common.data.LanguageProvider;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 public class HorsingLanguageProvider extends LanguageProvider {
 	public HorsingLanguageProvider(PackOutput packOutput) {
@@ -20,6 +20,10 @@ public class HorsingLanguageProvider extends LanguageProvider {
 		addSubtitle(HorsingRegistry.CALL, "Calling companion");
 
 		add("message.horsingaround.no_tamed_entities", "You don't have any tamed entities added to your list");
+
+		add("horsingaround.networking.summon.failed", "Failed to summon tamed entity %s");
+		add("horsingaround.networking.unlink.failed", "Failed to unlink tamed entity %s");
+		add("horsingaround.networking.sync.failed", "Failed to sync tamed entities %s");
 	}
 
 	/**
@@ -28,7 +32,7 @@ public class HorsingLanguageProvider extends LanguageProvider {
 	 * @param sound The sound event registry object
 	 * @param text  The subtitle text
 	 */
-	public void addSubtitle(RegistryObject<SoundEvent> sound, String text) {
+	public void addSubtitle(DeferredHolder<SoundEvent, SoundEvent> sound, String text) {
 		this.addSubtitle(sound.get(), text);
 	}
 

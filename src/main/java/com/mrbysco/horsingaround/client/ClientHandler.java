@@ -7,9 +7,9 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.client.event.RenderGuiOverlayEvent;
-import net.minecraftforge.client.gui.overlay.ForgeGui;
-import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
+import net.neoforged.neoforge.client.event.RenderGuiOverlayEvent;
+import net.neoforged.neoforge.client.gui.overlay.ExtendedGui;
+import net.neoforged.neoforge.client.gui.overlay.VanillaGuiOverlay;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,7 @@ public class ClientHandler {
 	public static void onRenderOverlayPost(RenderGuiOverlayEvent.Post event) {
 		if (!event.getOverlay().id().equals(new ResourceLocation("mount_health"))) return;
 		Minecraft mc = Minecraft.getInstance();
-		if (!(mc.gui instanceof ForgeGui gui)) return;
+		if (!(mc.gui instanceof ExtendedGui gui)) return;
 		Player player = mc.player;
 		if (player == null) return;
 		GuiGraphics guiGraphics = event.getGuiGraphics();

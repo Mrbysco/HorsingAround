@@ -3,8 +3,7 @@ package com.mrbysco.horsingaround.data;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.mrbysco.horsingaround.HorsingAround;
-import com.mrbysco.horsingaround.network.PacketHandler;
-import com.mrbysco.horsingaround.network.message.SyncDataMessage;
+import com.mrbysco.horsingaround.network.message.SyncPayload;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -14,7 +13,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,7 +96,7 @@ public class CallData extends SavedData {
 		CompoundTag tag = new CompoundTag();
 		saveList(tag, playerUUID, tamedDataList);
 
-		PacketHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new SyncDataMessage(playerUUID, tag));
+		PacketDistributor.ALL.noArg().send(new SyncPayload(playerUUID, tag));
 	}
 
 	public void syncData() {
@@ -107,7 +106,7 @@ public class CallData extends SavedData {
 			CompoundTag tag = new CompoundTag();
 			saveList(tag, playerUUID, tamedDataList);
 
-			PacketHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new SyncDataMessage(playerUUID, tag));
+			PacketDistributor.ALL.noArg().send(new SyncPayload(playerUUID, tag));
 		}
 	}
 
@@ -167,7 +166,7 @@ public class CallData extends SavedData {
 		ServerLevel overworld = world.getServer().getLevel(Level.OVERWORLD);
 
 		DimensionDataStorage storage = overworld.getDataStorage();
-		return storage.computeIfAbsent(CallData::load, CallData::new, DATA_NAME);
+		return storage.computeIfAbsent(new Factory<>(CallData::new, CallData::load), DATA_NAME);
 	}
 
 	public record TamedData(UUID uuid, CompoundTag tag, String name) {

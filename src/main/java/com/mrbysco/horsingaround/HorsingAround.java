@@ -3,6 +3,7 @@ package com.mrbysco.horsingaround;
 import com.mojang.logging.LogUtils;
 import com.mrbysco.horsingaround.client.ClientHandler;
 import com.mrbysco.horsingaround.client.KeybindHandler;
+import com.mrbysco.horsingaround.config.HorsingConfig;
 import com.mrbysco.horsingaround.handler.SyncHandler;
 import com.mrbysco.horsingaround.handler.TameHandler;
 import com.mrbysco.horsingaround.network.PacketHandler;
@@ -11,13 +12,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
 
 @Mod(HorsingAround.MOD_ID)
@@ -27,25 +27,22 @@ public class HorsingAround {
 
 	public static final TagKey<Item> LINKING = ItemTags.create(new ResourceLocation(MOD_ID, "linking"));
 
-	public HorsingAround() {
-		IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+	public HorsingAround(IEventBus eventBus) {
+		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, HorsingConfig.commonSpec);
+		eventBus.register(HorsingConfig.class);
 
 		HorsingRegistry.SOUND_EVENTS.register(eventBus);
 
-		eventBus.addListener(this::commonSetup);
+		eventBus.addListener(PacketHandler::setupPackets);
 
-		MinecraftForge.EVENT_BUS.register(new SyncHandler());
-		MinecraftForge.EVENT_BUS.register(new TameHandler());
+		NeoForge.EVENT_BUS.register(new SyncHandler());
+		NeoForge.EVENT_BUS.register(new TameHandler());
 
-		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
-			MinecraftForge.EVENT_BUS.addListener(ClientHandler::onRenderOverlayPre);
-			MinecraftForge.EVENT_BUS.addListener(ClientHandler::onRenderOverlayPost);
+		if (FMLEnvironment.dist.isClient()) {
+			NeoForge.EVENT_BUS.addListener(ClientHandler::onRenderOverlayPre);
+			NeoForge.EVENT_BUS.addListener(ClientHandler::onRenderOverlayPost);
 			eventBus.addListener(KeybindHandler::registerKeymapping);
-			MinecraftForge.EVENT_BUS.addListener(KeybindHandler::keyEvent);
-		});
-	}
-
-	public void commonSetup(FMLCommonSetupEvent event) {
-		PacketHandler.init();
+			NeoForge.EVENT_BUS.addListener(KeybindHandler::keyEvent);
+		}
 	}
 }
