@@ -3,6 +3,7 @@ package com.mrbysco.horsingaround;
 import com.mojang.logging.LogUtils;
 import com.mrbysco.horsingaround.client.ClientHandler;
 import com.mrbysco.horsingaround.client.KeybindHandler;
+import com.mrbysco.horsingaround.config.HorsingConfig;
 import com.mrbysco.horsingaround.handler.SyncHandler;
 import com.mrbysco.horsingaround.handler.TameHandler;
 import com.mrbysco.horsingaround.network.PacketHandler;
@@ -15,7 +16,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
@@ -29,6 +32,8 @@ public class HorsingAround {
 
 	public HorsingAround() {
 		IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, HorsingConfig.commonSpec);
+		eventBus.register(HorsingConfig.class);
 
 		HorsingRegistry.SOUND_EVENTS.register(eventBus);
 
