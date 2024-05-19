@@ -2,13 +2,18 @@ package com.mrbysco.horsingaround.network.message;
 
 import com.mrbysco.horsingaround.HorsingAround;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.UUID;
 
 public record SummonPayload(UUID mobUUID) implements CustomPacketPayload {
-	public static final ResourceLocation ID = new ResourceLocation(HorsingAround.MOD_ID, "summon");
+
+	public static final StreamCodec<FriendlyByteBuf, SummonPayload> CODEC = CustomPacketPayload.codec(
+			SummonPayload::write,
+			SummonPayload::new);
+	public static final Type<SummonPayload> ID = CustomPacketPayload.createType(new ResourceLocation(HorsingAround.MOD_ID, "summon").toString());
 
 	public SummonPayload(final FriendlyByteBuf buf) {
 		this(buf.readUUID());
@@ -19,7 +24,7 @@ public record SummonPayload(UUID mobUUID) implements CustomPacketPayload {
 	}
 
 	@Override
-	public ResourceLocation id() {
+	public Type<? extends CustomPacketPayload> type() {
 		return ID;
 	}
 }

@@ -4,6 +4,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.mrbysco.horsingaround.HorsingAround;
 import com.mrbysco.horsingaround.network.message.SyncPayload;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -96,7 +97,7 @@ public class CallData extends SavedData {
 		CompoundTag tag = new CompoundTag();
 		saveList(tag, playerUUID, tamedDataList);
 
-		PacketDistributor.ALL.noArg().send(new SyncPayload(playerUUID, tag));
+		PacketDistributor.sendToAllPlayers(new SyncPayload(playerUUID, tag));
 	}
 
 	public void syncData() {
@@ -106,11 +107,11 @@ public class CallData extends SavedData {
 			CompoundTag tag = new CompoundTag();
 			saveList(tag, playerUUID, tamedDataList);
 
-			PacketDistributor.ALL.noArg().send(new SyncPayload(playerUUID, tag));
+			PacketDistributor.sendToAllPlayers(new SyncPayload(playerUUID, tag));
 		}
 	}
 
-	public static CallData load(CompoundTag tag) {
+	public static CallData load(CompoundTag tag, HolderLookup.Provider registries) {
 		ListMultimap<UUID, TamedData> tamedMap = ArrayListMultimap.create();
 		for (String uuid : tag.getAllKeys()) {
 			ListTag dataListTag = new ListTag();
@@ -140,7 +141,7 @@ public class CallData extends SavedData {
 	}
 
 	@Override
-	public CompoundTag save(CompoundTag compound) {
+	public CompoundTag save(CompoundTag compound, HolderLookup.Provider registries) {
 		for (UUID playerUUID : playerTamedMap.keySet()) {
 			List<TamedData> tamedDataList = playerTamedMap.get(playerUUID);
 

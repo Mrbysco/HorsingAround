@@ -7,7 +7,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,9 +21,10 @@ public class ClientPayloadHandler {
 		return INSTANCE;
 	}
 
-	public void handleSync(final SyncPayload syncData, final PlayPayloadContext context) {
-		context.workHandler().submitAsync(() -> {
-					context.player().ifPresent(player -> {
+	public void handleSync(final SyncPayload syncData, final IPayloadContext context) {
+		context.enqueueWork(() -> {
+					Player player = context.player();
+					if (player != null) {
 						ClientHandler.tamedList.clear();
 						UUID playerUUID = syncData.playerUUID();
 						CompoundTag data = syncData.data();
@@ -50,11 +52,11 @@ public class ClientPayloadHandler {
 							}
 							ClientHandler.tamedList.addAll(dataList);
 						}
-					});
+					}
 				})
 				.exceptionally(e -> {
 					// Handle exception
-					context.packetHandler().disconnect(Component.translatable("horsingaround.networking.sync.failed", e.getMessage()));
+					context.disconnect(Component.translatable("horsingaround.networking.sync.failed", e.getMessage()));
 					return null;
 				});
 	}

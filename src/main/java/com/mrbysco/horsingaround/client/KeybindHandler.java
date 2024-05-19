@@ -59,9 +59,9 @@ public class KeybindHandler {
 					ClientData data = stackList.get(id);
 					if (Screen.hasShiftDown()) {
 						//Remove entity from list
-						PacketDistributor.SERVER.noArg().send(new UnlinkPayload(data.data().uuid()));
+						PacketDistributor.sendToServer(new UnlinkPayload(data.data().uuid()));
 					} else {
-						PacketDistributor.SERVER.noArg().send(new SummonPayload(data.data().uuid()));
+						PacketDistributor.sendToServer(new SummonPayload(data.data().uuid()));
 					}
 				}, slots, RenderHelper::drawTamedEntities, 0)));
 			}

@@ -12,11 +12,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
 
@@ -27,8 +27,8 @@ public class HorsingAround {
 
 	public static final TagKey<Item> LINKING = ItemTags.create(new ResourceLocation(MOD_ID, "linking"));
 
-	public HorsingAround(IEventBus eventBus) {
-		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, HorsingConfig.commonSpec);
+	public HorsingAround(IEventBus eventBus, Dist dist, ModContainer container) {
+		container.registerConfig(ModConfig.Type.COMMON, HorsingConfig.commonSpec);
 		eventBus.register(HorsingConfig.class);
 
 		HorsingRegistry.SOUND_EVENTS.register(eventBus);
@@ -38,7 +38,7 @@ public class HorsingAround {
 		NeoForge.EVENT_BUS.register(new SyncHandler());
 		NeoForge.EVENT_BUS.register(new TameHandler());
 
-		if (FMLEnvironment.dist.isClient()) {
+		if (dist.isClient()) {
 			NeoForge.EVENT_BUS.addListener(ClientHandler::onRenderOverlayPre);
 			NeoForge.EVENT_BUS.addListener(ClientHandler::onRenderOverlayPost);
 			eventBus.addListener(KeybindHandler::registerKeymapping);

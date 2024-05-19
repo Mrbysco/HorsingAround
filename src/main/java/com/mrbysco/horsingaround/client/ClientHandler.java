@@ -1,15 +1,17 @@
 package com.mrbysco.horsingaround.client;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mrbysco.horsingaround.client.gui.radial_menu.GuiRadialMenu;
 import com.mrbysco.horsingaround.data.CallData;
+import com.mrbysco.horsingaround.mixin.GuiAccessor;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.client.event.RenderGuiOverlayEvent;
-import net.neoforged.neoforge.client.gui.overlay.ExtendedGui;
-import net.neoforged.neoforge.client.gui.overlay.VanillaGuiOverlay;
+import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
+import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,28 +19,26 @@ import java.util.List;
 public class ClientHandler {
 	public static final List<CallData.TamedData> tamedList = new ArrayList<>();
 
-	public static void onRenderOverlayPre(RenderGuiOverlayEvent.Pre event) {
-		if (Minecraft.getInstance().screen instanceof GuiRadialMenu<?> && event.getOverlay() == VanillaGuiOverlay.CROSSHAIR.type()) {
+	public static void onRenderOverlayPre(RenderGuiLayerEvent.Pre event) {
+		if (Minecraft.getInstance().screen instanceof GuiRadialMenu<?> && event.getName().equals(VanillaGuiLayers.CROSSHAIR)) {
 			event.setCanceled(true);
 		}
 	}
 
-	public static void onRenderOverlayPost(RenderGuiOverlayEvent.Post event) {
-		if (!event.getOverlay().id().equals(new ResourceLocation("mount_health"))) return;
+	public static void onRenderOverlayPost(RenderGuiLayerEvent.Post event) {
+		if (!event.getName().equals(new ResourceLocation("vehicle_health"))) return;
 		Minecraft mc = Minecraft.getInstance();
-		if (!(mc.gui instanceof ExtendedGui gui)) return;
+		Gui gui = mc.gui;
+		if (gui == null) return;
 		Player player = mc.player;
 		if (player == null) return;
 		GuiGraphics guiGraphics = event.getGuiGraphics();
-
 		Entity vehicle = player.getVehicle();
 		boolean isMounted = vehicle != null && vehicle.showVehicleHealth();
-		if (isMounted && !mc.options.hideGui && gui.shouldDrawSurvivalElements()) {
-			int height = mc.getWindow().getGuiScaledHeight();
-			int width = mc.getWindow().getGuiScaledWidth();
-
-			gui.setupOverlayRenderState(true, false);
-			gui.renderFood(width, height, guiGraphics);
+		if (isMounted && !mc.options.hideGui) {
+			int i1 = guiGraphics.guiWidth() / 2 + 91;
+			int j1 = guiGraphics.guiHeight() - gui.rightHeight;
+			((GuiAccessor) gui).invokeRenderFoodLevel(guiGraphics, player, j1, i1);
 		}
 	}
 }
