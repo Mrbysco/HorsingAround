@@ -1,1 +1,1 @@
-* Initial NeoForge build
+* Initial update to 1.20.6
