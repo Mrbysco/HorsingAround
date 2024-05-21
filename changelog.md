@@ -1,1 +1,1 @@
-* Initial update to 1.20.6
+* Add config option to link upon tame
