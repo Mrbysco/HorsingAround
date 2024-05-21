@@ -10,10 +10,11 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.EntityMountEvent;
+import net.neoforged.neoforge.event.entity.living.AnimalTameEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import net.neoforged.bus.api.SubscribeEvent;
 
 import java.util.UUID;
 
@@ -33,6 +34,16 @@ public class TameHandler {
 		}
 	}
 
+	@SubscribeEvent
+	public void onTameAnimal(AnimalTameEvent event) {
+		if (event.getTamer() instanceof Player player && !player.level().isClientSide && HorsingConfig.COMMON.addOnTame.get()) {
+			Entity tamedAnimal = event.getAnimal();
+			if (tamedAnimal instanceof OwnableEntity) {
+				CallData callData = CallData.get(player.level());
+				callData.addTamedData(player.getUUID(), tamedAnimal);
+			}
+		}
+	}
 
 	@SubscribeEvent
 	public void onEntityInteract(PlayerInteractEvent.EntityInteractSpecific event) {
