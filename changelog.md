@@ -1,1 +1,1 @@
-* Initial NeoForge build
+* Add config option to link upon tame
