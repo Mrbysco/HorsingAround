@@ -36,7 +36,8 @@ public class TameHandler {
 
 	@SubscribeEvent
 	public void onTameAnimal(AnimalTameEvent event) {
-		if (event.getTamer() instanceof Player player && !player.level().isClientSide && HorsingConfig.COMMON.addOnTame.get()) {
+		Player player = event.getTamer();
+		if (event.getTamer() != null && !player.level().isClientSide && HorsingConfig.COMMON.addOnTame.get()) {
 			Entity tamedAnimal = event.getAnimal();
 			if (tamedAnimal instanceof OwnableEntity) {
 				CallData callData = CallData.get(player.level());
