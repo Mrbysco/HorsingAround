@@ -25,6 +25,9 @@ public class ClientPayloadHandler {
 					context.player().ifPresent(player -> {
 						ClientHandler.tamedList.clear();
 						UUID playerUUID = syncData.playerUUID();
+						if (!player.getUUID().equals(playerUUID)) {
+							return;
+						}
 						CompoundTag data = syncData.data();
 
 						ListTag dataListTag = new ListTag();
