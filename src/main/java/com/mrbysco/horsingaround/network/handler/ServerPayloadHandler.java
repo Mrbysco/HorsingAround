@@ -25,37 +25,35 @@ public class ServerPayloadHandler {
 		// Do something with the data, on the main thread
 		context.workHandler().submitAsync(() -> {
 					//Sync big Player Statue data
-					if (context.player().isPresent()) {
-						if (context.player().get() instanceof ServerPlayer player) {
-							ServerLevel level = player.serverLevel();
-							UUID mobUUID = summonData.mobUUID();
+					if (context.player().get() instanceof ServerPlayer player) {
+						ServerLevel level = player.serverLevel();
+						UUID mobUUID = summonData.mobUUID();
 
-							Entity mob = level.getEntity(mobUUID);
-							CallData callData = CallData.get(player.level());
-							if (mob == null) {
-								List<CallData.TamedData> tamedList = callData.getTamedData(player.getUUID());
-								CallData.TamedData matchingData = null;
-								for (CallData.TamedData data : tamedList) {
-									if (data.uuid().equals(mobUUID)) {
-										matchingData = data;
-										break;
-									}
+						Entity mob = level.getEntity(mobUUID);
+						CallData callData = CallData.get(player.level());
+						if (mob == null) {
+							List<CallData.TamedData> tamedList = callData.getTamedData(player.getUUID());
+							CallData.TamedData matchingData = null;
+							for (CallData.TamedData data : tamedList) {
+								if (data.uuid().equals(mobUUID)) {
+									matchingData = data;
+									break;
 								}
-
-								if (matchingData != null) {
-									Entity entity = matchingData.createEntity(player.level());
-									entity.setPos(player.position());
-									level.addFreshEntity(entity);
-								}
-							} else {
-								mob.teleportTo(player.getX(), player.getY(), player.getZ());
-								callData.updateData(mob.getUUID(), mob);
 							}
-							callData.syncData(player.getUUID());
 
-							level.playSound((Player) null, player.blockPosition(), HorsingRegistry.CALL.get(), player.getSoundSource(),
-									1.0F, 1.0F + (level.random.nextFloat() - level.random.nextFloat()) * 0.4F);
+							if (matchingData != null) {
+								Entity entity = matchingData.createEntity(player.level());
+								entity.setPos(player.position());
+								level.addFreshEntity(entity);
+							}
+						} else {
+							mob.teleportTo(player.getX(), player.getY(), player.getZ());
+							callData.updateData(mob.getUUID(), mob);
 						}
+						callData.syncData(player.getUUID());
+
+						level.playSound((Player) null, player.blockPosition(), HorsingRegistry.CALL.get(), player.getSoundSource(),
+								1.0F, 1.0F + (level.random.nextFloat() - level.random.nextFloat()) * 0.4F);
 					}
 				})
 				.exceptionally(e -> {
