@@ -1,1 +1,1 @@
-* Add config option to link upon tame
+* Add a UUID check to the sync packet handling
