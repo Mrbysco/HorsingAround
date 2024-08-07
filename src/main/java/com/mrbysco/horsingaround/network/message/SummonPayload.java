@@ -13,7 +13,7 @@ public record SummonPayload(UUID mobUUID) implements CustomPacketPayload {
 	public static final StreamCodec<FriendlyByteBuf, SummonPayload> CODEC = CustomPacketPayload.codec(
 			SummonPayload::write,
 			SummonPayload::new);
-	public static final Type<SummonPayload> ID = CustomPacketPayload.createType(new ResourceLocation(HorsingAround.MOD_ID, "summon").toString());
+	public static final Type<SummonPayload> ID = new Type<>(ResourceLocation.fromNamespaceAndPath(HorsingAround.MOD_ID, "summon"));
 
 	public SummonPayload(final FriendlyByteBuf buf) {
 		this(buf.readUUID());

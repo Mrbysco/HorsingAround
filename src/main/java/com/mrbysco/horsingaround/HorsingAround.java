@@ -17,6 +17,8 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.client.gui.ConfigurationScreen;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
 
@@ -25,7 +27,7 @@ public class HorsingAround {
 	public static final String MOD_ID = "horsingaround";
 	public static final Logger LOGGER = LogUtils.getLogger();
 
-	public static final TagKey<Item> LINKING = ItemTags.create(new ResourceLocation(MOD_ID, "linking"));
+	public static final TagKey<Item> LINKING = ItemTags.create(ResourceLocation.fromNamespaceAndPath(MOD_ID, "linking"));
 
 	public HorsingAround(IEventBus eventBus, Dist dist, ModContainer container) {
 		container.registerConfig(ModConfig.Type.COMMON, HorsingConfig.commonSpec);
@@ -39,9 +41,10 @@ public class HorsingAround {
 		NeoForge.EVENT_BUS.register(new TameHandler());
 
 		if (dist.isClient()) {
+			container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
+			eventBus.addListener(KeybindHandler::registerKeymapping);
 			NeoForge.EVENT_BUS.addListener(ClientHandler::onRenderOverlayPre);
 			NeoForge.EVENT_BUS.addListener(ClientHandler::onRenderOverlayPost);
-			eventBus.addListener(KeybindHandler::registerKeymapping);
 			NeoForge.EVENT_BUS.addListener(KeybindHandler::keyEvent);
 		}
 	}

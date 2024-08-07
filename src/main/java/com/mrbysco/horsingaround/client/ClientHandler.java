@@ -1,6 +1,5 @@
 package com.mrbysco.horsingaround.client;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mrbysco.horsingaround.client.gui.radial_menu.GuiRadialMenu;
 import com.mrbysco.horsingaround.data.CallData;
 import com.mrbysco.horsingaround.mixin.GuiAccessor;
@@ -26,7 +25,7 @@ public class ClientHandler {
 	}
 
 	public static void onRenderOverlayPost(RenderGuiLayerEvent.Post event) {
-		if (!event.getName().equals(new ResourceLocation("vehicle_health"))) return;
+		if (!event.getName().equals(VanillaGuiLayers.VEHICLE_HEALTH)) return;
 		Minecraft mc = Minecraft.getInstance();
 		Gui gui = mc.gui;
 		if (gui == null) return;

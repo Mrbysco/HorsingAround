@@ -1,4 +1,11 @@
 {
+  "horsingaround.configuration.addOnMount": "Add on Mount",
+  "horsingaround.configuration.addOnMount.tooltip": "Add tamed mountable entities to the call list upon mounting [Default: false]",
+  "horsingaround.configuration.addOnTame": "Add on Tame",
+  "horsingaround.configuration.addOnTame.tooltip": "Add mountable entities to the call list upon being tamed [Default: false]",
+  "horsingaround.configuration.general": "General",
+  "horsingaround.configuration.general.tooltip": "General Settings",
+  "horsingaround.configuration.title": "Horsing Around Config",
   "horsingaround.networking.summon.failed": "Failed to summon tamed entity %s",
   "horsingaround.networking.sync.failed": "Failed to sync tamed entities %s",
   "horsingaround.networking.unlink.failed": "Failed to unlink tamed entity %s",

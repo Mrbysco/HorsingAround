@@ -24,6 +24,6 @@ public class HorsingSoundProvider extends SoundDefinitionsProvider {
 	}
 
 	public ResourceLocation modLoc(String name) {
-		return new ResourceLocation(HorsingAround.MOD_ID, name);
+		return ResourceLocation.fromNamespaceAndPath(HorsingAround.MOD_ID, name);
 	}
 }

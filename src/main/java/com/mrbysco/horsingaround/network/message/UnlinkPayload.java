@@ -13,7 +13,7 @@ public record UnlinkPayload(UUID mobUUID) implements CustomPacketPayload {
 	public static final StreamCodec<FriendlyByteBuf, UnlinkPayload> CODEC = CustomPacketPayload.codec(
 			UnlinkPayload::write,
 			UnlinkPayload::new);
-	public static final Type<UnlinkPayload> ID = CustomPacketPayload.createType(new ResourceLocation(HorsingAround.MOD_ID, "unlink").toString());
+	public static final Type<UnlinkPayload> ID = new Type<>(ResourceLocation.fromNamespaceAndPath(HorsingAround.MOD_ID, "unlink"));
 
 	public UnlinkPayload(final FriendlyByteBuf buf) {
 		this(buf.readUUID());

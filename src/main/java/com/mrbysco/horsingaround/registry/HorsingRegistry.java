@@ -11,6 +11,6 @@ public class HorsingRegistry {
 	public static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(BuiltInRegistries.SOUND_EVENT, HorsingAround.MOD_ID);
 
 	public static final DeferredHolder<SoundEvent, SoundEvent> CALL = SOUND_EVENTS.register("call", () ->
-			SoundEvent.createVariableRangeEvent(new ResourceLocation(HorsingAround.MOD_ID, "call")));
+			SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(HorsingAround.MOD_ID, "call")));
 
 }

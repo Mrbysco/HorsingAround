@@ -14,7 +14,7 @@ public record SyncPayload(UUID playerUUID, CompoundTag data) implements CustomPa
 	public static final StreamCodec<FriendlyByteBuf, SyncPayload> CODEC = CustomPacketPayload.codec(
 			SyncPayload::write,
 			SyncPayload::new);
-	public static final Type<SyncPayload> ID = CustomPacketPayload.createType(new ResourceLocation(HorsingAround.MOD_ID, "sync").toString());
+	public static final Type<SyncPayload> ID = new Type<>(ResourceLocation.fromNamespaceAndPath(HorsingAround.MOD_ID, "sync"));
 
 	public SyncPayload(final FriendlyByteBuf buf) {
 		this(buf.readUUID(), buf.readNbt());
