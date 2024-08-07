@@ -1,1 +1,1 @@
-* Add config option to link upon tame
+* Fix sync packet not checking the player
