@@ -11,6 +11,7 @@ import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.entity.EntityMountEvent;
+import net.minecraftforge.event.entity.living.AnimalTameEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -33,6 +34,17 @@ public class TameHandler {
 		}
 	}
 
+	@SubscribeEvent
+	public void onTameAnimal(AnimalTameEvent event) {
+		Player player = event.getTamer();
+		if (player != null && !player.level().isClientSide && HorsingConfig.COMMON.addOnTame.get()) {
+			Entity tamedAnimal = event.getAnimal();
+			if (tamedAnimal instanceof OwnableEntity) {
+				CallData callData = CallData.get(player.level());
+				callData.addTamedData(player.getUUID(), tamedAnimal);
+			}
+		}
+	}
 
 	@SubscribeEvent
 	public void onEntityInteract(PlayerInteractEvent.EntityInteractSpecific event) {
