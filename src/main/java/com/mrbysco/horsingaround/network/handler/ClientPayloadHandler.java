@@ -25,34 +25,37 @@ public class ClientPayloadHandler {
 		context.enqueueWork(() -> {
 					Player player = context.player();
 					if (player != null) {
-						ClientHandler.tamedList.clear();
 						UUID playerUUID = syncData.playerUUID();
-						CompoundTag data = syncData.data();
+						if (player.getUUID().equals(playerUUID)) {
+							ClientHandler.tamedList.clear();
+							CompoundTag data = syncData.data();
 
-						ListTag dataListTag = new ListTag();
-						String uuid = playerUUID.toString();
-						if (data.getTagType(uuid) == 9) {
-							Tag nbt = data.get(uuid);
-							if (nbt instanceof ListTag listNBT) {
-								if (!listNBT.isEmpty() && listNBT.getElementType() != CompoundTag.TAG_COMPOUND) {
-									return;
-								}
+							ListTag dataListTag = new ListTag();
+							String uuid = playerUUID.toString();
+							if (data.getTagType(uuid) == 9) {
+								Tag nbt = data.get(uuid);
+								if (nbt instanceof ListTag listNBT) {
+									if (!listNBT.isEmpty() && listNBT.getElementType() != CompoundTag.TAG_COMPOUND) {
+										return;
+									}
 
-								dataListTag = listNBT;
-							}
-						}
-						if (!dataListTag.isEmpty()) {
-							List<CallData.TamedData> dataList = new ArrayList<>();
-							for (int i = 0; i < dataListTag.size(); ++i) {
-								CompoundTag dataTag = dataListTag.getCompound(i);
-								CallData.TamedData tamedData = CallData.TamedData.load(dataTag);
-								if (tamedData != null) {
-									dataList.add(tamedData);
+									dataListTag = listNBT;
 								}
 							}
-							ClientHandler.tamedList.addAll(dataList);
+							if (!dataListTag.isEmpty()) {
+								List<CallData.TamedData> dataList = new ArrayList<>();
+								for (int i = 0; i < dataListTag.size(); ++i) {
+									CompoundTag dataTag = dataListTag.getCompound(i);
+									CallData.TamedData tamedData = CallData.TamedData.load(dataTag);
+									if (tamedData != null) {
+										dataList.add(tamedData);
+									}
+								}
+								ClientHandler.tamedList.addAll(dataList);
+							}
 						}
 					}
+					;
 				})
 				.exceptionally(e -> {
 					// Handle exception
