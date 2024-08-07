@@ -1,1 +1,1 @@
-* Fix sync packet not checking the player
+* Initial update to 1.21
