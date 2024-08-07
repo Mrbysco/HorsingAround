@@ -1,1 +1,1 @@
-* Add a UUID check to the sync packet handling
+* Adjust player check
