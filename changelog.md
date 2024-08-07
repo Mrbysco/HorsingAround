@@ -1,1 +1,1 @@
-* Fix config not generating
+* Backport `addOnTame` config option
