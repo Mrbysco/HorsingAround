@@ -27,7 +27,7 @@ public class HorsingLanguageProvider extends LanguageProvider {
 		add("horsingaround.networking.sync.failed", "Failed to sync tamed entities %s");
 
 		addConfig("title", "Horsing Around Config", null);
-		addConfig("general", "General", "General Settings");
+		addConfig("General", "General", "General Settings");
 		addConfig("addOnMount", "Add on Mount", "Add tamed mountable entities to the call list upon mounting [Default: false]");
 		addConfig("addOnTame", "Add on Tame", "Add mountable entities to the call list upon being tamed [Default: false]");
 	}
