@@ -1,1 +1,1 @@
-* Initial update to 1.21
+* Fix unlocalized value in in-game config screen
