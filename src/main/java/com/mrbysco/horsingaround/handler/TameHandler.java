@@ -26,7 +26,7 @@ public class TameHandler {
 			if (event.getEntityMounting() instanceof Player player && !player.level().isClientSide && HorsingConfig.COMMON.addOnMount.get()) {
 				Entity mountedEntity = event.getEntityBeingMounted();
 				if (mountedEntity instanceof OwnableEntity ownableEntity &&
-						ownableEntity.getOwnerUUID() != null && ownableEntity.getOwnerUUID().equals(player.getUUID())) {
+						ownableEntity.getOwnerReference() != null && ownableEntity.getOwnerReference().getUUID().equals(player.getUUID())) {
 					CallData callData = CallData.get(player.level());
 					callData.addTamedData(player.getUUID(), mountedEntity);
 				}
@@ -54,7 +54,7 @@ public class TameHandler {
 			ItemStack stack = event.getItemStack();
 			if (stack.is(HorsingAround.LINKING) && event.getHand() == InteractionHand.MAIN_HAND &&
 					targetEntity instanceof OwnableEntity ownableEntity &&
-					ownableEntity.getOwnerUUID() != null && ownableEntity.getOwnerUUID().equals(player.getUUID())) {
+					ownableEntity.getOwnerReference() != null && ownableEntity.getOwnerReference().getUUID().equals(player.getUUID())) {
 				CallData callData = CallData.get(player.level());
 				callData.addTamedData(player.getUUID(), targetEntity);
 
@@ -72,8 +72,8 @@ public class TameHandler {
 		LivingEntity livingEntity = event.getEntity();
 		if (!livingEntity.level().isClientSide) {
 			if (event.getEntity() instanceof OwnableEntity ownableEntity) {
-				UUID ownerUUID = ownableEntity.getOwnerUUID();
-				if (ownerUUID != null) {
+				if (ownableEntity.getOwnerReference() != null) {
+					UUID ownerUUID = ownableEntity.getOwnerReference().getUUID();
 					CallData callData = CallData.get(livingEntity.level());
 					callData.removeTamedData(ownerUUID, livingEntity);
 				}

@@ -1,6 +1,5 @@
 package com.mrbysco.horsingaround.client.gui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.mrbysco.horsingaround.client.gui.radial_menu.ClientData;
@@ -33,8 +32,8 @@ public class RenderHelper {
 		entityRenderDispatcher.overrideCameraOrientation(new Quaternionf(0.0F, 0.0F, 0.0F, 1.0F));
 		entityRenderDispatcher.setRenderShadow(false);
 		final MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-		RenderSystem.runAsFancy(() -> {
-			entityRenderDispatcher.render(tamedEntity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, poseStack, bufferSource, 15728880);
+		guiGraphics.drawSpecial((buffer) -> {
+			entityRenderDispatcher.render(tamedEntity, 0.0D, 0.0D, 0.0D, 1.0F, poseStack, buffer, 15728880);
 		});
 		bufferSource.endBatch();
 		entityRenderDispatcher.setRenderShadow(true);

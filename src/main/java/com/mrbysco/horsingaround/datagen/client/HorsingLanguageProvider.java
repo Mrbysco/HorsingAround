@@ -49,7 +49,7 @@ public class HorsingLanguageProvider extends LanguageProvider {
 	 * @param text  The subtitle text
 	 */
 	public void addSubtitle(SoundEvent sound, String text) {
-		String path = HorsingAround.MOD_ID + ".subtitle." + sound.getLocation().getPath();
+		String path = HorsingAround.MOD_ID + ".subtitle." + sound.location().getPath();
 		this.add(path, text);
 	}
 

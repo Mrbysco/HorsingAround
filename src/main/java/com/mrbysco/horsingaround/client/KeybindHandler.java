@@ -52,7 +52,7 @@ public class KeybindHandler {
 					}
 				}
 				if (slots.isEmpty()) {
-					mc.player.sendSystemMessage(Component.translatable("message.horsingaround.no_tamed_entities"));
+					mc.player.displayClientMessage(Component.translatable("message.horsingaround.no_tamed_entities"), false);
 					return;
 				}
 				Minecraft.getInstance().setScreen(new GuiRadialMenu<>(new RadialMenu<>((id) -> {

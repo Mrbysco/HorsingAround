@@ -2,15 +2,14 @@ package com.mrbysco.horsingaround.network.handler;
 
 import com.mrbysco.horsingaround.client.ClientHandler;
 import com.mrbysco.horsingaround.data.CallData;
+import com.mrbysco.horsingaround.data.CallData.TamedData;
 import com.mrbysco.horsingaround.network.message.SyncPayload;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,32 +29,11 @@ public class ClientPayloadHandler {
 							ClientHandler.tamedList.clear();
 							CompoundTag data = syncData.data();
 
-							ListTag dataListTag = new ListTag();
-							String uuid = playerUUID.toString();
-							if (data.getTagType(uuid) == 9) {
-								Tag nbt = data.get(uuid);
-								if (nbt instanceof ListTag listNBT) {
-									if (!listNBT.isEmpty() && listNBT.getElementType() != CompoundTag.TAG_COMPOUND) {
-										return;
-									}
-
-									dataListTag = listNBT;
-								}
-							}
-							if (!dataListTag.isEmpty()) {
-								List<CallData.TamedData> dataList = new ArrayList<>();
-								for (int i = 0; i < dataListTag.size(); ++i) {
-									CompoundTag dataTag = dataListTag.getCompound(i);
-									CallData.TamedData tamedData = CallData.TamedData.load(dataTag);
-									if (tamedData != null) {
-										dataList.add(tamedData);
-									}
-								}
-								ClientHandler.tamedList.addAll(dataList);
-							}
+							List<CallData.TamedData> dataList = TamedData.CODEC.listOf()
+									.decode(player.registryAccess().createSerializationContext(NbtOps.INSTANCE), data).getOrThrow().getFirst();
+							ClientHandler.tamedList.addAll(dataList);
 						}
 					}
-					;
 				})
 				.exceptionally(e -> {
 					// Handle exception

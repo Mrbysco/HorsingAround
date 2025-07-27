@@ -24,7 +24,7 @@ public class SyncHandler {
 	public void onEntityTick(EntityTickEvent.Post event) {
 		Entity entity = event.getEntity();
 		if (!entity.level().isClientSide && entity.tickCount % 80 == 0 &&
-				entity instanceof OwnableEntity ownableEntity && ownableEntity.getOwnerUUID() != null) {
+				entity instanceof OwnableEntity ownableEntity && ownableEntity.getOwner() != null) {
 			CallData callData = CallData.get(entity.level());
 			if (callData.isKnown(entity.getUUID())) {
 				callData.updateData(entity.getUUID(), entity);

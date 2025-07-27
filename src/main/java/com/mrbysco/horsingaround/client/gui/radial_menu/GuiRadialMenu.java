@@ -149,7 +149,7 @@ public class GuiRadialMenu<T> extends Screen {
 				drawSlice(buffer, centerOfScreenX, centerOfScreenY, 10, radiusIn, radiusOut, sliceBorderLeft, sliceBorderRight, 0, 0, 0, 64);
 		}
 		BufferUploader.drawWithShader(buffer.buildOrThrow());
-		RenderSystem.disableBlend();
+//		RenderSystem.disableBlend();
 		if (hasMouseOver && mousedOverSlot != -1) {
 			int adjusted = ((mousedOverSlot + (numberOfSlices / 2 + 1)) % numberOfSlices) - 1;
 			adjusted = adjusted == -1 ? numberOfSlices - 1 : adjusted;
@@ -165,7 +165,7 @@ public class GuiRadialMenu<T> extends Screen {
 			}
 			float posX = centerOfScreenX - 8 + itemRadius * (float) Math.cos(angle1);
 			float posY = centerOfScreenY - 8 + itemRadius * (float) Math.sin(angle1);
-			RenderSystem.disableDepthTest();
+//			RenderSystem.disableDepthTest();
 
 			T primarySlotIcon = radialMenuSlots.get(i).primarySlotIcon();
 			List<T> secondarySlotIcons = radialMenuSlots.get(i).secondarySlotIcons();
