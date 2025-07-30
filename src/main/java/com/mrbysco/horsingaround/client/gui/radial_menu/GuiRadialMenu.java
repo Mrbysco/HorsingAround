@@ -2,28 +2,25 @@ package com.mrbysco.horsingaround.client.gui.radial_menu;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.BufferUploader;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.player.Input;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.player.ClientInput;
+import net.minecraft.client.player.KeyboardInput;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Input;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.Vec2;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 
 import java.util.List;
 
@@ -57,24 +54,28 @@ public class GuiRadialMenu<T> extends Screen {
 
 	@SubscribeEvent
 	public static void updateInputEvent(MovementInputUpdateEvent event) {
-		if (Minecraft.getInstance().screen instanceof GuiRadialMenu) {
-
+		if (Minecraft.getInstance().screen instanceof GuiRadialMenu) { //TODO: REDO THIS!!!!
 			Options settings = Minecraft.getInstance().options;
-			Input eInput = event.getInput();
+//
 			long window = Minecraft.getInstance().getWindow().getWindow();
-			eInput.up = InputConstants.isKeyDown(window, settings.keyUp.getKey().getValue());
-			eInput.down = InputConstants.isKeyDown(window, settings.keyDown.getKey().getValue());
-			eInput.left = InputConstants.isKeyDown(window, settings.keyLeft.getKey().getValue());
-			eInput.right = InputConstants.isKeyDown(window, settings.keyRight.getKey().getValue());
+			boolean up = InputConstants.isKeyDown(window, settings.keyUp.getKey().getValue());
+			boolean down = InputConstants.isKeyDown(window, settings.keyDown.getKey().getValue());
+			boolean left = InputConstants.isKeyDown(window, settings.keyLeft.getKey().getValue());
+			boolean right = InputConstants.isKeyDown(window, settings.keyRight.getKey().getValue());
+			boolean jumping = InputConstants.isKeyDown(window, settings.keyJump.getKey().getValue());
+			boolean shift = InputConstants.isKeyDown(window, settings.keyShift.getKey().getValue());
+			boolean sprint = InputConstants.isKeyDown(window, settings.keySprint.getKey().getValue());
 
-			eInput.forwardImpulse = eInput.up == eInput.down ? 0.0F : (eInput.up ? 1.0F : -1.0F);
-			eInput.leftImpulse = eInput.left == eInput.right ? 0.0F : (eInput.left ? 1.0F : -1.0F);
-			eInput.jumping = InputConstants.isKeyDown(window, settings.keyJump.getKey().getValue());
-			eInput.shiftKeyDown = InputConstants.isKeyDown(window, settings.keyShift.getKey().getValue());
-			if (Minecraft.getInstance().player.isMovingSlowly()) {
-				eInput.leftImpulse = (float) ((double) eInput.leftImpulse * 0.3D);
-				eInput.forwardImpulse = (float) ((double) eInput.forwardImpulse * 0.3D);
-			}
+			ClientInput clientInput = event.getInput();
+			clientInput.keyPresses = new Input(
+					up, down, left, right,
+					jumping, shift, sprint
+			);
+			Input keyPresses = clientInput.keyPresses;
+
+			float f = KeyboardInput.calculateImpulse(keyPresses.forward(), keyPresses.backward());
+			float f1 = KeyboardInput.calculateImpulse(keyPresses.left(), keyPresses.right());
+			clientInput.moveVector = new Vec2(f1, f).normalized();
 		}
 	}
 
@@ -88,9 +89,10 @@ public class GuiRadialMenu<T> extends Screen {
 	@Override
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		super.render(graphics, mouseX, mouseY, partialTicks);
-		PoseStack ms = graphics.pose();
+		PoseStack poseStack = graphics.pose();
 		float openAnimation = closing ? 1.0f - totalTime / OPEN_ANIMATION_LENGTH : totalTime / OPEN_ANIMATION_LENGTH;
-		float currTick = minecraft.getTimer().getGameTimeDeltaPartialTick(false);
+		assert minecraft != null;
+		float currTick = minecraft.getDeltaTracker().getGameTimeDeltaPartialTick(false);
 		totalTime += (currTick + extraTick - prevTick) / 20f;
 		extraTick = 0;
 		prevTick = currTick;
@@ -113,15 +115,15 @@ public class GuiRadialMenu<T> extends Screen {
 			mousePositionInDegreesInRelationToCenterOfScreen += 360;
 		}
 
-		ms.pushPose();
-		RenderSystem.enableBlend();
-		RenderSystem.defaultBlendFunc();
-		RenderSystem.setShader(GameRenderer::getPositionColorShader);
+		poseStack.pushPose();
+//		RenderSystem.enableBlend();
+//		RenderSystem.defaultBlendFunc();
+//		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
 
-		Tesselator tesselator = Tesselator.getInstance();
-		BufferBuilder buffer = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+//		Tesselator tesselator = Tesselator.getInstance();
+//		BufferBuilder buffer = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 		boolean hasMouseOver = false;
 		int mousedOverSlot = -1;
 
@@ -142,13 +144,15 @@ public class GuiRadialMenu<T> extends Screen {
 			float sliceBorderLeft = (((i - 0.5f) / (float) numberOfSlices) + 0.25f) * 360;
 			float sliceBorderRight = (((i + 0.5f) / (float) numberOfSlices) + 0.25f) * 360;
 			if (selectedItem == i) {
-				drawSlice(buffer, centerOfScreenX, centerOfScreenY, 10, radiusIn, radiusOut, sliceBorderLeft, sliceBorderRight, 63, 161, 191, 60);
+				drawSlice(graphics, centerOfScreenX, centerOfScreenY, 10, radiusIn, radiusOut, sliceBorderLeft, sliceBorderRight, 63, 161, 191, 60);
 				hasMouseOver = true;
 				mousedOverSlot = selectedItem;
 			} else
-				drawSlice(buffer, centerOfScreenX, centerOfScreenY, 10, radiusIn, radiusOut, sliceBorderLeft, sliceBorderRight, 0, 0, 0, 64);
+				drawSlice(graphics, centerOfScreenX, centerOfScreenY, 10, radiusIn, radiusOut, sliceBorderLeft, sliceBorderRight, 0, 0, 0, 64);
 		}
-		BufferUploader.drawWithShader(buffer.buildOrThrow());
+
+//		BufferUploader.drawWithShader(buffer.buildOrThrow());
+
 //		RenderSystem.disableBlend();
 		if (hasMouseOver && mousedOverSlot != -1) {
 			int adjusted = ((mousedOverSlot + (numberOfSlices / 2 + 1)) % numberOfSlices) - 1;
@@ -156,7 +160,7 @@ public class GuiRadialMenu<T> extends Screen {
 			graphics.drawCenteredString(font, radialMenuSlots.get(adjusted).slotName(), width / 2, (height - font.lineHeight) / 2, 16777215);
 		}
 
-		ms.popPose();
+		poseStack.popPose();
 		for (int i = 0; i < numberOfSlices; i++) {
 			ItemStack stack = new ItemStack(Blocks.DIRT);
 			float angle1 = ((i / (float) numberOfSlices) - 0.25f) * 2 * (float) Math.PI;
@@ -175,10 +179,10 @@ public class GuiRadialMenu<T> extends Screen {
 					drawSecondaryIcons(graphics, (int) posX, (int) posY, secondarySlotIcons);
 				}
 			}
-			ms.pushPose();
-			ms.translate(0, 0, 9999);
+			poseStack.pushPose();
+			poseStack.translate(0, 0, 9999);
 			drawSliceName(graphics, String.valueOf(i + 1), stack, (int) posX, (int) posY);
-			ms.popPose();
+			poseStack.popPose();
 		}
 
 		if (mousedOverSlot != -1) {
@@ -188,29 +192,29 @@ public class GuiRadialMenu<T> extends Screen {
 		}
 	}
 
-	public void drawSecondaryIcons(GuiGraphics ms, int positionXOfPrimaryIcon, int positionYOfPrimaryIcon, List<T> secondarySlotIcons) {
+	public void drawSecondaryIcons(GuiGraphics graphics, int positionXOfPrimaryIcon, int positionYOfPrimaryIcon, List<T> secondarySlotIcons) {
 		if (!radialMenu.isShowMoreSecondaryItems()) {
-			drawSecondaryIcon(ms, secondarySlotIcons.get(0), positionXOfPrimaryIcon, positionYOfPrimaryIcon, radialMenu.getSecondaryIconStartingPosition());
+			drawSecondaryIcon(graphics, secondarySlotIcons.get(0), positionXOfPrimaryIcon, positionYOfPrimaryIcon, radialMenu.getSecondaryIconStartingPosition());
 		} else {
 			SecondaryIconPosition currentSecondaryIconPosition = radialMenu.getSecondaryIconStartingPosition();
 			for (T secondarySlotIcon : secondarySlotIcons) {
-				drawSecondaryIcon(ms, secondarySlotIcon, positionXOfPrimaryIcon, positionYOfPrimaryIcon, currentSecondaryIconPosition);
+				drawSecondaryIcon(graphics, secondarySlotIcon, positionXOfPrimaryIcon, positionYOfPrimaryIcon, currentSecondaryIconPosition);
 				currentSecondaryIconPosition = SecondaryIconPosition.getNextPosition(currentSecondaryIconPosition);
 			}
 		}
 	}
 
-	public void drawSecondaryIcon(GuiGraphics poseStack, T item, int positionXOfPrimaryIcon, int positionYOfPrimaryIcon, SecondaryIconPosition secondaryIconPosition) {
+	public void drawSecondaryIcon(GuiGraphics graphics, T item, int positionXOfPrimaryIcon, int positionYOfPrimaryIcon, SecondaryIconPosition secondaryIconPosition) {
 		int offset = radialMenu.getOffset();
 		switch (secondaryIconPosition) {
 			case NORTH ->
-					radialMenu.drawIcon(item, poseStack, positionXOfPrimaryIcon + offset, positionYOfPrimaryIcon - 14 + offset, 10);
+					radialMenu.drawIcon(item, graphics, positionXOfPrimaryIcon + offset, positionYOfPrimaryIcon - 14 + offset, 10);
 			case EAST ->
-					radialMenu.drawIcon(item, poseStack, positionXOfPrimaryIcon + 14 + offset, positionYOfPrimaryIcon + offset, 10);
+					radialMenu.drawIcon(item, graphics, positionXOfPrimaryIcon + 14 + offset, positionYOfPrimaryIcon + offset, 10);
 			case SOUTH ->
-					radialMenu.drawIcon(item, poseStack, positionXOfPrimaryIcon + offset, positionYOfPrimaryIcon + 14 + offset, 10);
+					radialMenu.drawIcon(item, graphics, positionXOfPrimaryIcon + offset, positionYOfPrimaryIcon + 14 + offset, 10);
 			case WEST ->
-					radialMenu.drawIcon(item, poseStack, positionXOfPrimaryIcon - 14 + offset, positionYOfPrimaryIcon + offset, 10);
+					radialMenu.drawIcon(item, graphics, positionXOfPrimaryIcon - 14 + offset, positionYOfPrimaryIcon + offset, 10);
 		}
 	}
 
@@ -244,13 +248,15 @@ public class GuiRadialMenu<T> extends Screen {
 	}
 
 	public void drawSlice(
-			BufferBuilder buffer, float x, float y, float z, float radiusIn, float radiusOut, float startAngle, float endAngle, int r, int g, int b, int a) {
+			GuiGraphics graphics, float x, float y, float z, float radiusIn, float radiusOut, float startAngle, float endAngle, int r, int g, int b, int a) {
 		float angle = endAngle - startAngle;
 		int sections = Math.max(1, Mth.ceil(angle / PRECISION));
 
 		startAngle = (float) Math.toRadians(startAngle);
 		endAngle = (float) Math.toRadians(endAngle);
 		angle = endAngle - startAngle;
+
+		int color = (a << 24) | (r << 16) | (g << 8) | b;
 
 		for (int i = 0; i < sections; i++) {
 			float angle1 = startAngle + (i / (float) sections) * angle;
@@ -265,10 +271,12 @@ public class GuiRadialMenu<T> extends Screen {
 			float pos2InX = x + radiusIn * (float) Math.cos(angle2);
 			float pos2InY = y + radiusIn * (float) Math.sin(angle2);
 
-			buffer.addVertex(pos1OutX, pos1OutY, z).setColor(r, g, b, a);
-			buffer.addVertex(pos1InX, pos1InY, z).setColor(r, g, b, a);
-			buffer.addVertex(pos2InX, pos2InY, z).setColor(r, g, b, a);
-			buffer.addVertex(pos2OutX, pos2OutY, z).setColor(r, g, b, a);
+			int minX = (int) Math.min(Math.min(pos1InX, pos2InX), Math.min(pos1OutX, pos2OutX));
+			int maxX = (int) Math.max(Math.max(pos1InX, pos2InX), Math.max(pos1OutX, pos2OutX));
+			int minY = (int) Math.min(Math.min(pos1InY, pos2InY), Math.min(pos1OutY, pos2OutY));
+			int maxY = (int) Math.max(Math.max(pos1InY, pos2InY), Math.max(pos1OutY, pos2OutY));
+
+			graphics.fill(RenderType.gui(), minX, minY, maxX, maxY, (int) z, color);
 		}
 	}
 

@@ -2,10 +2,7 @@ package com.mrbysco.horsingaround.network.handler;
 
 import com.mrbysco.horsingaround.client.ClientHandler;
 import com.mrbysco.horsingaround.data.CallData;
-import com.mrbysco.horsingaround.data.CallData.TamedData;
 import com.mrbysco.horsingaround.network.message.SyncPayload;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -27,10 +24,8 @@ public class ClientPayloadHandler {
 						UUID playerUUID = syncData.playerUUID();
 						if (player.getUUID().equals(playerUUID)) {
 							ClientHandler.tamedList.clear();
-							CompoundTag data = syncData.data();
 
-							List<CallData.TamedData> dataList = TamedData.CODEC.listOf()
-									.decode(player.registryAccess().createSerializationContext(NbtOps.INSTANCE), data).getOrThrow().getFirst();
+							List<CallData.TamedData> dataList = syncData.tamedDataList();
 							ClientHandler.tamedList.addAll(dataList);
 						}
 					}

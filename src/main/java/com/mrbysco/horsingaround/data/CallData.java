@@ -1,6 +1,5 @@
 package com.mrbysco.horsingaround.data;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -8,8 +7,9 @@ import com.mrbysco.horsingaround.HorsingAround;
 import com.mrbysco.horsingaround.network.message.SyncPayload;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -23,6 +23,7 @@ import net.minecraft.world.level.storage.DimensionDataStorage;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -32,7 +33,7 @@ public class CallData extends SavedData {
 	private static final String DATA_NAME = HorsingAround.MOD_ID + "_data";
 
 	public static final Codec<CallData> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-					Codec.unboundedMap(UUIDUtil.CODEC, TamedData.CODEC.listOf()).fieldOf("playerTamedMap").forGetter(data -> data.playerTamedMap))
+					Codec.unboundedMap(UUIDUtil.STRING_CODEC, TamedData.CODEC.listOf()).fieldOf("playerTamedMap").forGetter(data -> data.playerTamedMap))
 			.apply(inst, CallData::new));
 
 	private final Map<UUID, List<TamedData>> playerTamedMap;
@@ -47,10 +48,12 @@ public class CallData extends SavedData {
 
 	public void addTamedData(UUID playerUUID, Entity entity) {
 		List<TamedData> dataList = getTamedData(playerUUID);
+		dataList = new ArrayList<>(dataList); // Create a mutable copy
 		boolean known = dataList.stream().anyMatch(tamedData -> tamedData.uuid().equals(entity.getUUID()));
 		if (!known) {
 			TamedData tamedData = TamedData.createData(entity.getUUID(), entity);
-			List<TamedData> tameList = playerTamedMap.computeIfAbsent(playerUUID, k -> Lists.newArrayList());
+			List<TamedData> tameList = playerTamedMap.getOrDefault(playerUUID, new ArrayList<>());
+			tameList = new ArrayList<>(tameList); // Create a mutable copy
 			tameList.add(tamedData);
 			playerTamedMap.put(playerUUID, tameList);
 		} else {
@@ -82,7 +85,7 @@ public class CallData extends SavedData {
 	}
 
 	public List<TamedData> getTamedData(UUID playerUUID) {
-		return playerTamedMap.get(playerUUID);
+		return playerTamedMap.getOrDefault(playerUUID, new ArrayList<>());
 	}
 
 	public boolean hasTamedData(UUID playerUUID) {
@@ -115,12 +118,8 @@ public class CallData extends SavedData {
 			HorsingAround.LOGGER.warn("Tried to sync tamed data for player {} but they are not online", playerUUID);
 			return;
 		}
-		List<TamedData> tamedDataList = playerTamedMap.get(playerUUID);
-		Tag tag = TamedData.CODEC.listOf().encodeStart(server.registryAccess().createSerializationContext(NbtOps.INSTANCE), tamedDataList)
-				.getOrThrow();
-		if (tag instanceof CompoundTag compoundTag) {
-			PacketDistributor.sendToPlayer(serverPlayer, new SyncPayload(playerUUID, compoundTag));
-		}
+		List<TamedData> tamedDataList = playerTamedMap.getOrDefault(playerUUID, new ArrayList<>());
+		PacketDistributor.sendToPlayer(serverPlayer, new SyncPayload(playerUUID, tamedDataList));
 	}
 
 	public static SavedDataType<CallData> type() {
@@ -133,6 +132,7 @@ public class CallData extends SavedData {
 		}
 		ServerLevel overworld = world.getServer().getLevel(Level.OVERWORLD);
 
+		assert overworld != null;
 		DimensionDataStorage storage = overworld.getDataStorage();
 		return storage.computeIfAbsent(type());
 	}
@@ -145,6 +145,15 @@ public class CallData extends SavedData {
 								Codec.STRING.optionalFieldOf("name", "").forGetter(data -> data.name)
 						)
 						.apply(instance, TamedData::new)
+		);
+		public static final StreamCodec<FriendlyByteBuf, TamedData> STREAM_CODEC = StreamCodec.composite(
+				UUIDUtil.STREAM_CODEC,
+				data -> data.uuid,
+				ByteBufCodecs.COMPOUND_TAG,
+				data -> data.tag,
+				ByteBufCodecs.STRING_UTF8,
+				data -> data.name,
+				TamedData::new
 		);
 
 		public static TamedData createData(UUID uuid, Entity entity) {
