@@ -1,6 +1,6 @@
 package com.mrbysco.horsingaround.client.gui.radial_menu;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 import java.util.List;
 import java.util.function.IntConsumer;
@@ -67,7 +67,7 @@ public class RadialMenu<T> {
 		return this.secondaryIconStartingPosition;
 	}
 
-	public void drawIcon(T objectToBeDrawn, GuiGraphics poseStack, int positionX, int positionY, int size) {
+	public void drawIcon(T objectToBeDrawn, GuiGraphicsExtractor poseStack, int positionX, int positionY, int size) {
 		this.drawCallback.accept(objectToBeDrawn, poseStack, positionX, positionY, size, false);
 	}
 

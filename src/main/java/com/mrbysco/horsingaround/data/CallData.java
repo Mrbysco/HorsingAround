@@ -10,16 +10,19 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
-import net.minecraft.world.level.storage.DimensionDataStorage;
+import net.minecraft.world.level.storage.SavedDataStorage;
+import net.minecraft.world.level.storage.TagValueOutput;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
@@ -30,7 +33,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class CallData extends SavedData {
-	private static final String DATA_NAME = HorsingAround.MOD_ID + "_data";
+	private static final Identifier DATA_NAME = Identifier.fromNamespaceAndPath(HorsingAround.MOD_ID, "call_data");
 
 	public static final Codec<CallData> CODEC = RecordCodecBuilder.create(inst -> inst.group(
 					Codec.unboundedMap(UUIDUtil.STRING_CODEC, TamedData.CODEC.listOf()).fieldOf("playerTamedMap").forGetter(data -> data.playerTamedMap))
@@ -59,8 +62,11 @@ public class CallData extends SavedData {
 		} else {
 			//Update data if it already exists
 			dataList.stream().filter(tamedData -> tamedData.uuid().equals(entity.getUUID())).findFirst().ifPresent(tamedData -> {
-				CompoundTag data = entity.saveWithoutId(tamedData.tag());
-				data.putString("id", EntityType.getKey(entity.getType()).toString());
+				try (ProblemReporter.ScopedCollector problemreporter$scopedcollector = new ProblemReporter.ScopedCollector(HorsingAround.LOGGER)) {
+					TagValueOutput output = TagValueOutput.createWithContext(problemreporter$scopedcollector, entity.registryAccess());
+					entity.saveAsPassenger(output);
+					tamedData.tag().merge(output.buildResult());
+				}
 			});
 		}
 
@@ -104,8 +110,11 @@ public class CallData extends SavedData {
 	public void updateData(UUID uuid, Entity entity) {
 		for (List<TamedData> tamedDataList : playerTamedMap.values()) {
 			tamedDataList.stream().filter(tamedData -> tamedData.uuid().equals(uuid)).findFirst().ifPresent(tamedData -> {
-				CompoundTag data = entity.saveWithoutId(tamedData.tag());
-				data.putString("id", EntityType.getKey(entity.getType()).toString());
+				try (ProblemReporter.ScopedCollector problemreporter$scopedcollector = new ProblemReporter.ScopedCollector(HorsingAround.LOGGER)) {
+					TagValueOutput output = TagValueOutput.createWithContext(problemreporter$scopedcollector, entity.registryAccess());
+					entity.saveAsPassenger(output);
+					tamedData.tag().merge(output.buildResult());
+				}
 			});
 		}
 		setDirty();
@@ -133,7 +142,7 @@ public class CallData extends SavedData {
 		ServerLevel overworld = world.getServer().getLevel(Level.OVERWORLD);
 
 		assert overworld != null;
-		DimensionDataStorage storage = overworld.getDataStorage();
+		SavedDataStorage storage = overworld.getDataStorage();
 		return storage.computeIfAbsent(type());
 	}
 
@@ -157,9 +166,11 @@ public class CallData extends SavedData {
 		);
 
 		public static TamedData createData(UUID uuid, Entity entity) {
-			CompoundTag data = entity.saveWithoutId(new CompoundTag());
-			data.putString("id", EntityType.getKey(entity.getType()).toString());
-			return new TamedData(uuid, data, entity.getDisplayName().getString());
+			try (ProblemReporter.ScopedCollector problemreporter$scopedcollector = new ProblemReporter.ScopedCollector(HorsingAround.LOGGER)) {
+				TagValueOutput output = TagValueOutput.createWithContext(problemreporter$scopedcollector, entity.registryAccess());
+				entity.saveAsPassenger(output);
+				return new TamedData(uuid, output.buildResult(), entity.getDisplayName().getString());
+			}
 		}
 
 		public Entity createEntity(Level level) {

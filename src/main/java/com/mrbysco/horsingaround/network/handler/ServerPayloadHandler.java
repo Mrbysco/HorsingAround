@@ -25,7 +25,7 @@ public class ServerPayloadHandler {
 		context.enqueueWork(() -> {
 					Player player = context.player();
 					if (player instanceof ServerPlayer serverPlayer) {
-						ServerLevel level = serverPlayer.serverLevel();
+						ServerLevel level = serverPlayer.level();
 						UUID mobUUID = summonData.mobUUID();
 
 						Entity mob = level.getEntity(mobUUID);
@@ -52,7 +52,7 @@ public class ServerPayloadHandler {
 						callData.syncData(serverPlayer.getUUID());
 
 						level.playSound((Player) null, serverPlayer.blockPosition(), HorsingRegistry.CALL.get(), serverPlayer.getSoundSource(),
-								1.0F, 1.0F + (level.random.nextFloat() - level.random.nextFloat()) * 0.4F);
+								1.0F, 1.0F + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.4F);
 					}
 				})
 				.exceptionally(e -> {

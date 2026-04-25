@@ -5,7 +5,7 @@ import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.UUID;
 
@@ -14,7 +14,7 @@ public record UnlinkPayload(UUID mobUUID) implements CustomPacketPayload {
 			UUIDUtil.STREAM_CODEC,
 			UnlinkPayload::mobUUID,
 			UnlinkPayload::new);
-	public static final Type<UnlinkPayload> ID = new Type<>(ResourceLocation.fromNamespaceAndPath(HorsingAround.MOD_ID, "unlink"));
+	public static final Type<UnlinkPayload> ID = new Type<>(Identifier.fromNamespaceAndPath(HorsingAround.MOD_ID, "unlink"));
 
 	@Override
 	public Type<? extends CustomPacketPayload> type() {

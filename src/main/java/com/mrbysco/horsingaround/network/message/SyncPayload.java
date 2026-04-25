@@ -7,7 +7,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,7 +19,7 @@ public record SyncPayload(UUID playerUUID, List<TamedData> tamedDataList) implem
 			TamedData.STREAM_CODEC.apply(ByteBufCodecs.list()),
 			SyncPayload::tamedDataList,
 			SyncPayload::new);
-	public static final Type<SyncPayload> ID = new Type<>(ResourceLocation.fromNamespaceAndPath(HorsingAround.MOD_ID, "sync"));
+	public static final Type<SyncPayload> ID = new Type<>(Identifier.fromNamespaceAndPath(HorsingAround.MOD_ID, "sync"));
 
 	@Override
 	public Type<? extends CustomPacketPayload> type() {

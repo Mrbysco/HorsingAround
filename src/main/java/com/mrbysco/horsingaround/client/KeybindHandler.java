@@ -11,25 +11,29 @@ import com.mrbysco.horsingaround.network.message.SummonPayload;
 import com.mrbysco.horsingaround.network.message.UnlinkPayload;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class KeybindHandler {
-	public static KeyMapping KEY_OPEN_MENU = new KeyMapping(getKey("open_menu"), GLFW.GLFW_KEY_X, getKey("category"));
+	public static KeyMapping KEY_OPEN_MENU = new KeyMapping(
+			getKey("open_menu"), GLFW.GLFW_KEY_X, getCategory("category"));
 
 	private static String getKey(String name) {
 		return String.join(".", "key", HorsingAround.MOD_ID, name);
 	}
 
+	private static KeyMapping.Category getCategory(String name) {
+		return new KeyMapping.Category(Identifier.fromNamespaceAndPath(HorsingAround.MOD_ID, name));
+	}
 
 	public static void registerKeymapping(final RegisterKeyMappingsEvent event) {
 		event.register(KEY_OPEN_MENU);
@@ -52,18 +56,18 @@ public class KeybindHandler {
 					}
 				}
 				if (slots.isEmpty()) {
-					mc.player.displayClientMessage(Component.translatable("message.horsingaround.no_tamed_entities"), false);
+					mc.player.sendSystemMessage(Component.translatable("message.horsingaround.no_tamed_entities"));
 					return;
 				}
 				Minecraft.getInstance().setScreen(new GuiRadialMenu<>(new RadialMenu<>((id) -> {
 					ClientData data = stackList.get(id);
-					if (Screen.hasShiftDown()) {
+					if (mc.hasShiftDown()) {
 						//Remove entity from list
-						PacketDistributor.sendToServer(new UnlinkPayload(data.data().uuid()));
+						ClientPacketDistributor.sendToServer(new UnlinkPayload(data.data().uuid()));
 					} else {
-						PacketDistributor.sendToServer(new SummonPayload(data.data().uuid()));
+						ClientPacketDistributor.sendToServer(new SummonPayload(data.data().uuid()));
 					}
-				}, slots, RenderHelper::drawTamedEntities, 0)));
+				}, slots, RenderHelper::extractTamedEntities, 0)));
 			}
 		}
 	}

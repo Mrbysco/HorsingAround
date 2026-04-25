@@ -5,8 +5,7 @@ import com.mrbysco.horsingaround.data.CallData;
 import com.mrbysco.horsingaround.mixin.GuiAccessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
@@ -31,13 +30,13 @@ public class ClientHandler {
 		if (gui == null) return;
 		Player player = mc.player;
 		if (player == null) return;
-		GuiGraphics guiGraphics = event.getGuiGraphics();
+		GuiGraphicsExtractor guiGraphics = event.getGuiGraphics();
 		Entity vehicle = player.getVehicle();
 		boolean isMounted = vehicle != null && vehicle.showVehicleHealth();
 		if (isMounted && !mc.options.hideGui) {
 			int i1 = guiGraphics.guiWidth() / 2 + 91;
 			int j1 = guiGraphics.guiHeight() - gui.rightHeight;
-			((GuiAccessor) gui).invokeRenderFoodLevel(guiGraphics, player, j1, i1);
+			((GuiAccessor) gui).invokeExtractFood(guiGraphics, player, j1, i1);
 		}
 	}
 }

@@ -23,7 +23,7 @@ public class TameHandler {
 	@SubscribeEvent
 	public void onMount(EntityMountEvent event) {
 		if (event.isMounting()) {
-			if (event.getEntityMounting() instanceof Player player && !player.level().isClientSide && HorsingConfig.COMMON.addOnMount.get()) {
+			if (event.getEntityMounting() instanceof Player player && !player.level().isClientSide() && HorsingConfig.COMMON.addOnMount.get()) {
 				Entity mountedEntity = event.getEntityBeingMounted();
 				if (mountedEntity instanceof OwnableEntity ownableEntity &&
 						ownableEntity.getOwnerReference() != null && ownableEntity.getOwnerReference().getUUID().equals(player.getUUID())) {
@@ -37,7 +37,7 @@ public class TameHandler {
 	@SubscribeEvent
 	public void onTameAnimal(AnimalTameEvent event) {
 		Player player = event.getTamer();
-		if (event.getTamer() != null && !player.level().isClientSide && HorsingConfig.COMMON.addOnTame.get()) {
+		if (event.getTamer() != null && !player.level().isClientSide() && HorsingConfig.COMMON.addOnTame.get()) {
 			Entity tamedAnimal = event.getAnimal();
 			if (tamedAnimal instanceof OwnableEntity) {
 				CallData callData = CallData.get(player.level());
@@ -49,7 +49,7 @@ public class TameHandler {
 	@SubscribeEvent
 	public void onEntityInteract(PlayerInteractEvent.EntityInteractSpecific event) {
 		Player player = event.getEntity();
-		if (!player.level().isClientSide) {
+		if (!player.level().isClientSide()) {
 			Entity targetEntity = event.getTarget();
 			ItemStack stack = event.getItemStack();
 			if (stack.is(HorsingAround.LINKING) && event.getHand() == InteractionHand.MAIN_HAND &&
@@ -70,7 +70,7 @@ public class TameHandler {
 	@SubscribeEvent
 	public void onDeath(LivingDeathEvent event) {
 		LivingEntity livingEntity = event.getEntity();
-		if (!livingEntity.level().isClientSide) {
+		if (!livingEntity.level().isClientSide()) {
 			if (event.getEntity() instanceof OwnableEntity ownableEntity) {
 				if (ownableEntity.getOwnerReference() != null) {
 					UUID ownerUUID = ownableEntity.getOwnerReference().getUUID();

@@ -8,7 +8,7 @@ import com.mrbysco.horsingaround.handler.SyncHandler;
 import com.mrbysco.horsingaround.handler.TameHandler;
 import com.mrbysco.horsingaround.network.PacketHandler;
 import com.mrbysco.horsingaround.registry.HorsingRegistry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -27,7 +27,7 @@ public class HorsingAround {
 	public static final String MOD_ID = "horsingaround";
 	public static final Logger LOGGER = LogUtils.getLogger();
 
-	public static final TagKey<Item> LINKING = ItemTags.create(ResourceLocation.fromNamespaceAndPath(MOD_ID, "linking"));
+	public static final TagKey<Item> LINKING = ItemTags.create(Identifier.fromNamespaceAndPath(MOD_ID, "linking"));
 
 	public HorsingAround(IEventBus eventBus, Dist dist, ModContainer container) {
 		container.registerConfig(ModConfig.Type.COMMON, HorsingConfig.commonSpec);
