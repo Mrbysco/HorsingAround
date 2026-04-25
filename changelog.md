@@ -1,1 +1,1 @@
-* Fix unlocalized value in in-game config screen
+* Update to 26.1.2
