@@ -7,6 +7,35 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class HorsingConfig {
+	public static class Client {
+		public final ModConfigSpec.BooleanValue pixelatedMode;
+		public final ModConfigSpec.IntValue hoverColor;
+
+		Client(ModConfigSpec.Builder builder) {
+			builder.comment("Client settings")
+					.push("Client");
+
+			pixelatedMode = builder
+					.comment("Use hexagonal style for the radial menu slices instead of smooth circle")
+					.define("pixelatedMode", false);
+
+			hoverColor = builder
+					.comment("The integer color of the radial menu when hovering a slice [Default: 4170175]")
+					.defineInRange("hoverColor", 0x3FA1BF, 0x000000, 0xFFFFFF);
+
+			builder.pop();
+		}
+	}
+
+	public static final ModConfigSpec clientSpec;
+	public static final Client CLIENT;
+
+	static {
+		final Pair<Client, ModConfigSpec> specPair = new ModConfigSpec.Builder().configure(Client::new);
+		clientSpec = specPair.getRight();
+		CLIENT = specPair.getLeft();
+	}
+
 	public static class Common {
 		public final ModConfigSpec.BooleanValue addOnMount;
 		public final ModConfigSpec.BooleanValue addOnTame;

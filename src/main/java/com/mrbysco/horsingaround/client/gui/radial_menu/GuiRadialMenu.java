@@ -30,7 +30,8 @@ import java.util.List;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class GuiRadialMenu<T> extends Screen {
-	private static final float PRECISION = 5.0f;
+	private static final float PRECISION_SMOOTH = 5.0f;
+	private static final float PRECISION_PIXELATED = 45.0F;
 	private static final int MAX_SLOTS = 20;
 
 	private boolean closing;
@@ -44,13 +45,21 @@ public class GuiRadialMenu<T> extends Screen {
 	 * Zero-Based index
 	 */
 	private int selectedItem;
+	private final boolean pixelatedMode;
+	private final int hoverColor;
 
-	public GuiRadialMenu(RadialMenu<T> radialMenu) {
+	public GuiRadialMenu(RadialMenu<T> radialMenu, boolean pixelatedMode, int hoverColor) {
 		super(Component.literal(""));
 		this.radialMenu = radialMenu;
 		this.radialMenuSlots = this.radialMenu.getRadialMenuSlots();
 		this.closing = false;
 		this.selectedItem = -1;
+		this.pixelatedMode = pixelatedMode;
+		this.hoverColor = hoverColor;
+	}
+
+	public GuiRadialMenu(RadialMenu<T> radialMenu) {
+		this(radialMenu, false, 0x3FA1BF);
 	}
 
 	@SubscribeEvent
@@ -138,7 +147,10 @@ public class GuiRadialMenu<T> extends Screen {
 			float sliceBorderLeft = (((i - 0.5f) / (float) numberOfSlices) + 0.25f) * 360;
 			float sliceBorderRight = (((i + 0.5f) / (float) numberOfSlices) + 0.25f) * 360;
 			if (selectedItem == i) {
-				drawSlice(graphics, centerOfScreenX, centerOfScreenY, 10, radiusIn, radiusOut, sliceBorderLeft, sliceBorderRight, 63, 161, 191, 60);
+				int r = (hoverColor >> 16) & 0xFF;
+				int g = (hoverColor >> 8) & 0xFF;
+				int b = hoverColor & 0xFF;
+				drawSlice(graphics, centerOfScreenX, centerOfScreenY, 10, radiusIn, radiusOut, sliceBorderLeft, sliceBorderRight, r, g, b, 60);
 				hasMouseOver = true;
 				mousedOverSlot = selectedItem;
 			} else
@@ -241,7 +253,8 @@ public class GuiRadialMenu<T> extends Screen {
 	                      float radiusIn, float radiusOut, float startAngle, float endAngle,
 	                      int r, int g, int b, int a) {
 		float angle = endAngle - startAngle;
-		int sections = Math.max(1, Mth.ceil(angle / PRECISION));
+		float precision = pixelatedMode ? PRECISION_PIXELATED : PRECISION_SMOOTH;
+		int sections = Math.max(1, Mth.ceil(angle / precision));
 
 		startAngle = (float) Math.toRadians(startAngle);
 		endAngle = (float) Math.toRadians(endAngle);

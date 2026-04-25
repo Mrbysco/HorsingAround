@@ -6,6 +6,7 @@ import com.mrbysco.horsingaround.client.gui.radial_menu.ClientData;
 import com.mrbysco.horsingaround.client.gui.radial_menu.GuiRadialMenu;
 import com.mrbysco.horsingaround.client.gui.radial_menu.RadialMenu;
 import com.mrbysco.horsingaround.client.gui.radial_menu.RadialMenuSlot;
+import com.mrbysco.horsingaround.config.HorsingConfig;
 import com.mrbysco.horsingaround.data.CallData;
 import com.mrbysco.horsingaround.network.message.SummonPayload;
 import com.mrbysco.horsingaround.network.message.UnlinkPayload;
@@ -60,14 +61,18 @@ public class KeybindHandler {
 					return;
 				}
 				Minecraft.getInstance().setScreen(new GuiRadialMenu<>(new RadialMenu<>((id) -> {
-					ClientData data = stackList.get(id);
-					if (mc.hasShiftDown()) {
-						//Remove entity from list
-						ClientPacketDistributor.sendToServer(new UnlinkPayload(data.data().uuid()));
-					} else {
-						ClientPacketDistributor.sendToServer(new SummonPayload(data.data().uuid()));
-					}
-				}, slots, RenderHelper::extractTamedEntities, 0)));
+							ClientData data = stackList.get(id);
+							if (mc.hasShiftDown()) {
+								//Remove entity from list
+								ClientPacketDistributor.sendToServer(new UnlinkPayload(data.data().uuid()));
+							} else {
+								ClientPacketDistributor.sendToServer(new SummonPayload(data.data().uuid()));
+							}
+						}, slots, RenderHelper::extractTamedEntities, 0),
+								HorsingConfig.CLIENT.pixelatedMode.get(),
+								HorsingConfig.CLIENT.hoverColor.get()
+						)
+				);
 			}
 		}
 	}
