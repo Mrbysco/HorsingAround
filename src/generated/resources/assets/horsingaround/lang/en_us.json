@@ -11,12 +11,15 @@
   "horsingaround.configuration.hoverColor.tooltip": "The integer color of the radial menu when hovering a slice [Default: 4170175]",
   "horsingaround.configuration.pixelatedMode": "Pixelated Mode",
   "horsingaround.configuration.pixelatedMode.tooltip": "Use hexagonal style for the radial menu slices instead of smooth circle",
+  "horsingaround.configuration.slotsVisible": "Slots Visible",
+  "horsingaround.configuration.slotsVisible.tooltip": "The max number of tamed entities visible in the radial menu [Default: 20]",
   "horsingaround.configuration.title": "Horsing Around Config",
   "horsingaround.networking.summon.failed": "Failed to summon tamed entity %s",
   "horsingaround.networking.sync.failed": "Failed to sync tamed entities %s",
   "horsingaround.networking.unlink.failed": "Failed to unlink tamed entity %s",
+  "horsingaround.radial.page": "Page %s/%s",
   "horsingaround.subtitle.call": "Calling companion",
-  "key.horsingaround.category": "Horsing Around",
+  "key.category.horsingaround.category": "Horsing Around",
   "key.horsingaround.open_menu": "Open Call Menu",
   "message.horsingaround.no_tamed_entities": "You don't have any tamed entities added to your list"
 }
