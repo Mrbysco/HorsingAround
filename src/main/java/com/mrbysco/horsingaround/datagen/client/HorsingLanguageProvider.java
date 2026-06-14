@@ -15,8 +15,10 @@ public class HorsingLanguageProvider extends LanguageProvider {
 
 	@Override
 	protected void addTranslations() {
-		add("key.horsingaround.category", "Horsing Around");
+		add("key.category.horsingaround.category", "Horsing Around");
 		add("key.horsingaround.open_menu", "Open Call Menu");
+
+		add("horsingaround.radial.page", "Page %s/%s");
 
 		addSubtitle(HorsingRegistry.CALL, "Calling companion");
 
@@ -33,6 +35,7 @@ public class HorsingLanguageProvider extends LanguageProvider {
 		addConfig("Client", "Client", "Client Settings");
 		addConfig("pixelatedMode", "Pixelated Mode", "Use hexagonal style for the radial menu slices instead of smooth circle");
 		addConfig("hoverColor", "Hover Color", "The integer color of the radial menu when hovering a slice [Default: 4170175]");
+		addConfig("slotsVisible", "Slots Visible", "The max number of tamed entities visible in the radial menu [Default: 20]");
 	}
 
 	/**
