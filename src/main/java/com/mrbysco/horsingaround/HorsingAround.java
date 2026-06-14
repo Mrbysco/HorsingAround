@@ -43,8 +43,10 @@ public class HorsingAround {
 		MinecraftForge.EVENT_BUS.register(new TameHandler());
 
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+			ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, HorsingConfig.clientSpec);
 			MinecraftForge.EVENT_BUS.addListener(ClientHandler::onRenderOverlayPre);
 			MinecraftForge.EVENT_BUS.addListener(ClientHandler::onRenderOverlayPost);
+
 			eventBus.addListener(KeybindHandler::registerKeymapping);
 			MinecraftForge.EVENT_BUS.addListener(KeybindHandler::keyEvent);
 		});

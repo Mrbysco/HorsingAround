@@ -14,7 +14,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.Input;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
@@ -41,19 +40,24 @@ public class GuiRadialMenu<T> extends Screen {
 	 * Zero-Based index
 	 */
 	private int selectedItem;
-	public ItemRenderer itemRenderer;
+	private final int hoverColor;
 
 	private final int itemsPerPage;
 	private int currentPage;
 
-	public GuiRadialMenu(RadialMenu<T> radialMenu) {
+	public GuiRadialMenu(RadialMenu<T> radialMenu, int hoverColor) {
 		super(Component.literal(""));
 		this.radialMenu = radialMenu;
 		this.radialMenuSlots = this.radialMenu.getRadialMenuSlots();
 		this.closing = false;
 		this.minecraft = Minecraft.getInstance();
 		this.selectedItem = -1;
-		this.itemsPerPage = HorsingConfig.CLIENT.slotsVisible.getAsInt();
+		this.hoverColor = hoverColor;
+		this.itemsPerPage = HorsingConfig.CLIENT.slotsVisible.get();
+	}
+
+	public GuiRadialMenu(RadialMenu<T> radialMenu) {
+		this(radialMenu, 0x3FA1BF);
 	}
 
 	private List<RadialMenuSlot<T>> getCurrentPageSlots() {
@@ -171,7 +175,10 @@ public class GuiRadialMenu<T> extends Screen {
 			float sliceBorderLeft = (((i - 0.5f) / (float) numberOfSlices) + 0.25f) * 360;
 			float sliceBorderRight = (((i + 0.5f) / (float) numberOfSlices) + 0.25f) * 360;
 			if (selectedItem == i) {
-				drawSlice(buffer, centerOfScreenX, centerOfScreenY, 10, radiusIn, radiusOut, sliceBorderLeft, sliceBorderRight, 63, 161, 191, 60);
+				int r = (hoverColor >> 16) & 0xFF;
+				int g = (hoverColor >> 8) & 0xFF;
+				int b = hoverColor & 0xFF;
+				drawSlice(buffer, centerOfScreenX, centerOfScreenY, 10, radiusIn, radiusOut, sliceBorderLeft, sliceBorderRight, r, g, b, 60);
 				hasMouseOver = true;
 				mousedOverSlot = selectedItem;
 			} else
@@ -275,8 +282,7 @@ public class GuiRadialMenu<T> extends Screen {
 		return true;
 	}
 
-	public void drawSlice(
-			BufferBuilder buffer, float x, float y, float z, float radiusIn, float radiusOut, float startAngle, float endAngle, int r, int g, int b, int a) {
+	public void drawSlice(BufferBuilder buffer, float x, float y, float z, float radiusIn, float radiusOut, float startAngle, float endAngle, int r, int g, int b, int a) {
 		float angle = endAngle - startAngle;
 		int sections = Math.max(1, Mth.ceil(angle / PRECISION));
 

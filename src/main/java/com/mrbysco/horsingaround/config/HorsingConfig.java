@@ -9,17 +9,12 @@ import org.apache.commons.lang3.tuple.Pair;
 public class HorsingConfig {
 
 	public static class Client {
-		public final ModConfigSpec.BooleanValue pixelatedMode;
-		public final ModConfigSpec.IntValue hoverColor;
-		public final ModConfigSpec.IntValue slotsVisible;
+		public final ForgeConfigSpec.IntValue hoverColor;
+		public final ForgeConfigSpec.IntValue slotsVisible;
 
-		Client(ModConfigSpec.Builder builder) {
+		Client(ForgeConfigSpec.Builder builder) {
 			builder.comment("Client settings")
 					.push("Client");
-
-			pixelatedMode = builder
-					.comment("Use hexagonal style for the radial menu slices instead of smooth circle")
-					.define("pixelatedMode", false);
 
 			hoverColor = builder
 					.comment("The integer color of the radial menu when hovering a slice [Default: 4170175]")
@@ -33,11 +28,11 @@ public class HorsingConfig {
 		}
 	}
 
-	public static final ModConfigSpec clientSpec;
+	public static final ForgeConfigSpec clientSpec;
 	public static final Client CLIENT;
 
 	static {
-		final Pair<Client, ModConfigSpec> specPair = new ModConfigSpec.Builder().configure(Client::new);
+		final Pair<Client, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Client::new);
 		clientSpec = specPair.getRight();
 		CLIENT = specPair.getLeft();
 	}
