@@ -1,25 +1,20 @@
 package com.mrbysco.horsingaround.config;
 
 import com.mrbysco.horsingaround.HorsingAround;
-import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.event.config.ModConfigEvent;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class HorsingConfig {
 
 	public static class Client {
-		public final ModConfigSpec.BooleanValue pixelatedMode;
 		public final ModConfigSpec.IntValue hoverColor;
 		public final ModConfigSpec.IntValue slotsVisible;
 
 		Client(ModConfigSpec.Builder builder) {
 			builder.comment("Client settings")
 					.push("Client");
-
-			pixelatedMode = builder
-					.comment("Use hexagonal style for the radial menu slices instead of smooth circle")
-					.define("pixelatedMode", false);
 
 			hoverColor = builder
 					.comment("The integer color of the radial menu when hovering a slice [Default: 4170175]")

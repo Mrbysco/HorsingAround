@@ -41,6 +41,7 @@ public class HorsingAround {
 		NeoForge.EVENT_BUS.register(new TameHandler());
 
 		if (dist.isClient()) {
+			container.registerConfig(ModConfig.Type.CLIENT, HorsingConfig.clientSpec);
 			container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
 			eventBus.addListener(KeybindHandler::registerKeymapping);
 			NeoForge.EVENT_BUS.addListener(ClientHandler::onRenderOverlayPre);
