@@ -8,6 +8,7 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mrbysco.horsingaround.config.HorsingConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
@@ -16,21 +17,20 @@ import net.minecraft.client.player.Input;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 
 import java.util.List;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class GuiRadialMenu<T> extends Screen {
 	private static final float PRECISION = 5.0f;
-	private static final int MAX_SLOTS = 20;
 
 	private boolean closing;
 	private RadialMenu<T> radialMenu;
@@ -45,6 +45,9 @@ public class GuiRadialMenu<T> extends Screen {
 	private int selectedItem;
 	public ItemRenderer itemRenderer;
 
+	private final int itemsPerPage;
+	private int currentPage;
+
 	public GuiRadialMenu(RadialMenu<T> radialMenu) {
 		super(Component.literal(""));
 		this.radialMenu = radialMenu;
@@ -52,7 +55,26 @@ public class GuiRadialMenu<T> extends Screen {
 		this.closing = false;
 		this.minecraft = Minecraft.getInstance();
 		this.selectedItem = -1;
-		itemRenderer = Minecraft.getInstance().getItemRenderer();
+		this.itemsPerPage = HorsingConfig.CLIENT.slotsVisible.getAsInt();
+	}
+
+	private List<RadialMenuSlot<T>> getCurrentPageSlots() {
+		int startIndex = currentPage * itemsPerPage;
+		int endIndex = Math.min(startIndex + itemsPerPage, radialMenuSlots.size());
+		return radialMenuSlots.subList(startIndex, endIndex);
+	}
+
+	@Override
+	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+		int totalPages = Mth.ceil((double) radialMenuSlots.size() / itemsPerPage);
+		if (scrollY > 0) {
+			currentPage = Math.max(0, currentPage - 1);
+			return true;
+		} else if (scrollY < 0) {
+			currentPage = Math.min(totalPages - 1, currentPage + 1);
+			return true;
+		}
+		return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
 	}
 
 	@SubscribeEvent
@@ -104,7 +126,15 @@ public class GuiRadialMenu<T> extends Screen {
 
 		int centerOfScreenX = width / 2;
 		int centerOfScreenY = height / 2;
-		int numberOfSlices = Math.min(MAX_SLOTS, radialMenuSlots.size());
+
+		int totalPages = Mth.ceil((double) radialMenuSlots.size() / itemsPerPage);
+		if (totalPages > 1) {
+			graphics.drawCenteredString(font, Component.translatable("horsingaround.radial.page", (currentPage + 1), totalPages),
+					centerOfScreenX, centerOfScreenY - 6, FastColor.ARGB32.opaque(0xFFFFFF));
+		}
+
+		List<RadialMenuSlot<T>> currentPageSlots = getCurrentPageSlots();
+		int numberOfSlices = currentPageSlots.size();
 
 		double mousePositionInDegreesInRelationToCenterOfScreen = Math.toDegrees(Math.atan2(mouseY - centerOfScreenY, mouseX - centerOfScreenX));
 		double mouseDistanceToCenterOfScreen = Math.sqrt(Math.pow(mouseX - centerOfScreenX, 2) + Math.pow(mouseY - centerOfScreenY, 2));
@@ -153,7 +183,7 @@ public class GuiRadialMenu<T> extends Screen {
 		if (hasMouseOver && mousedOverSlot != -1) {
 			int adjusted = ((mousedOverSlot + (numberOfSlices / 2 + 1)) % numberOfSlices) - 1;
 			adjusted = adjusted == -1 ? numberOfSlices - 1 : adjusted;
-			graphics.drawCenteredString(font, radialMenuSlots.get(adjusted).slotName(), width / 2, (height - font.lineHeight) / 2, 16777215);
+			graphics.drawCenteredString(font, currentPageSlots.get(adjusted).slotName(), width / 2, (height - font.lineHeight) / 2, 16777215);
 		}
 
 		ms.popPose();
@@ -167,8 +197,8 @@ public class GuiRadialMenu<T> extends Screen {
 			float posY = centerOfScreenY - 8 + itemRadius * (float) Math.sin(angle1);
 			RenderSystem.disableDepthTest();
 
-			T primarySlotIcon = radialMenuSlots.get(i).primarySlotIcon();
-			List<T> secondarySlotIcons = radialMenuSlots.get(i).secondarySlotIcons();
+			T primarySlotIcon = currentPageSlots.get(i).primarySlotIcon();
+			List<T> secondarySlotIcons = currentPageSlots.get(i).secondarySlotIcons();
 			if (primarySlotIcon != null) {
 				radialMenu.drawIcon(primarySlotIcon, graphics, (int) posX, (int) posY, 16);
 				if (secondarySlotIcons != null && !secondarySlotIcons.isEmpty()) {
@@ -225,8 +255,9 @@ public class GuiRadialMenu<T> extends Screen {
 	@Override
 	public boolean keyPressed(int key, int scanCode, int modifiers) {
 		int adjustedKey = key - 48;
-		if (adjustedKey >= 0 && adjustedKey < radialMenuSlots.size()) {
-			selectedItem = adjustedKey == 0 ? radialMenuSlots.size() : adjustedKey;
+		List<RadialMenuSlot<T>> currentPageSlots = getCurrentPageSlots();
+		if (adjustedKey >= 0 && adjustedKey < currentPageSlots.size()) {
+			selectedItem = adjustedKey == 0 ? currentPageSlots.size() : adjustedKey;
 			selectedItem = selectedItem - 1; // Offset by 1 because 0 based indexing but users see 1 indexed
 			mouseClicked(0, 0, 0);
 			return true;
@@ -237,7 +268,8 @@ public class GuiRadialMenu<T> extends Screen {
 	@Override
 	public boolean mouseClicked(double p_mouseClicked_1_, double p_mouseClicked_3_, int p_mouseClicked_5_) {
 		if (this.selectedItem != -1) {
-			radialMenu.setCurrentSlot(selectedItem);
+			int globalIndex = currentPage * itemsPerPage + selectedItem;
+			radialMenu.setCurrentSlot(globalIndex);
 			minecraft.player.closeContainer();
 		}
 		return true;
