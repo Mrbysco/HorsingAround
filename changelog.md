@@ -1,3 +1,3 @@
-* Add client config with the following options:
-    * `pixelatedMode` - Use hexagonal style for the radial menu slices instead of smooth circle
-    * `hoverColor` - The integer color of the radial menu when hovering a slice [Default: 4170175 aka #3FA1BF]
+* Add pagination to the radial menu allowing you to see more than 20 tamed entities
+* Add client config option `slotsVisible` to control how many slots are visible per page in the radial menu
+* Fix the keybind category translation
