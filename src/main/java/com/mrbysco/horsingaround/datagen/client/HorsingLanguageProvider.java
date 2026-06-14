@@ -18,6 +18,8 @@ public class HorsingLanguageProvider extends LanguageProvider {
 		add("key.horsingaround.category", "Horsing Around");
 		add("key.horsingaround.open_menu", "Open Call Menu");
 
+		add("horsingaround.radial.page", "Page %s/%s");
+
 		addSubtitle(HorsingRegistry.CALL, "Calling companion");
 
 		add("message.horsingaround.no_tamed_entities", "You don't have any tamed entities added to your list");
@@ -30,6 +32,11 @@ public class HorsingLanguageProvider extends LanguageProvider {
 		addConfig("General", "General", "General Settings");
 		addConfig("addOnMount", "Add on Mount", "Add tamed mountable entities to the call list upon mounting [Default: false]");
 		addConfig("addOnTame", "Add on Tame", "Add mountable entities to the call list upon being tamed [Default: false]");
+
+		addConfig("Client", "Client", "Client Settings");
+		addConfig("pixelatedMode", "Pixelated Mode", "Use hexagonal style for the radial menu slices instead of smooth circle");
+		addConfig("hoverColor", "Hover Color", "The integer color of the radial menu when hovering a slice [Default: 4170175]");
+		addConfig("slotsVisible", "Slots Visible", "The max number of tamed entities visible in the radial menu [Default: 20]");
 	}
 
 	/**
