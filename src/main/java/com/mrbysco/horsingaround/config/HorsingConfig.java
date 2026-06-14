@@ -10,6 +10,7 @@ public class HorsingConfig {
 	public static class Client {
 		public final ModConfigSpec.BooleanValue pixelatedMode;
 		public final ModConfigSpec.IntValue hoverColor;
+		public final ModConfigSpec.IntValue slotsVisible;
 
 		Client(ModConfigSpec.Builder builder) {
 			builder.comment("Client settings")
@@ -22,6 +23,10 @@ public class HorsingConfig {
 			hoverColor = builder
 					.comment("The integer color of the radial menu when hovering a slice [Default: 4170175]")
 					.defineInRange("hoverColor", 0x3FA1BF, 0x000000, 0xFFFFFF);
+
+			slotsVisible = builder
+					.comment("The max number of tamed entities visible in the radial menu [Default: 20]")
+					.defineInRange("slotsVisible", 20, 1, 100);
 
 			builder.pop();
 		}
