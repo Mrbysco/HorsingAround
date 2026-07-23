@@ -16,6 +16,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
@@ -24,6 +27,7 @@ import org.lwjgl.glfw.GLFW;
 import java.util.ArrayList;
 import java.util.List;
 
+@EventBusSubscriber(Dist.CLIENT)
 public class KeybindHandler {
 	public static KeyMapping KEY_OPEN_MENU = new KeyMapping(
 			getKey("open_menu"), GLFW.GLFW_KEY_X, getCategory("category"));
@@ -36,10 +40,12 @@ public class KeybindHandler {
 		return new KeyMapping.Category(Identifier.fromNamespaceAndPath(HorsingAround.MOD_ID, name));
 	}
 
+	@SubscribeEvent
 	public static void registerKeymapping(final RegisterKeyMappingsEvent event) {
 		event.register(KEY_OPEN_MENU);
 	}
 
+	@SubscribeEvent
 	public static void keyEvent(final InputEvent.Key event) {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.player == null || event.getAction() != 1)

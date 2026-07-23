@@ -1,8 +1,6 @@
 package com.mrbysco.horsingaround;
 
 import com.mojang.logging.LogUtils;
-import com.mrbysco.horsingaround.client.ClientHandler;
-import com.mrbysco.horsingaround.client.KeybindHandler;
 import com.mrbysco.horsingaround.config.HorsingConfig;
 import com.mrbysco.horsingaround.handler.SyncHandler;
 import com.mrbysco.horsingaround.handler.TameHandler;
@@ -43,10 +41,6 @@ public class HorsingAround {
 		if (dist.isClient()) {
 			container.registerConfig(ModConfig.Type.CLIENT, HorsingConfig.clientSpec);
 			container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
-			eventBus.addListener(KeybindHandler::registerKeymapping);
-			NeoForge.EVENT_BUS.addListener(ClientHandler::onRenderOverlayPre);
-			NeoForge.EVENT_BUS.addListener(ClientHandler::onRenderOverlayPost);
-			NeoForge.EVENT_BUS.addListener(KeybindHandler::keyEvent);
 		}
 	}
 }
