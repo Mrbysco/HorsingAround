@@ -7,6 +7,8 @@
   "horsingaround.configuration.addOnMount.tooltip": "Add tamed mountable entities to the call list upon mounting [Default: false]",
   "horsingaround.configuration.addOnTame": "Add on Tame",
   "horsingaround.configuration.addOnTame.tooltip": "Add mountable entities to the call list upon being tamed [Default: false]",
+  "horsingaround.configuration.entityBlacklist": "Entity Blacklist",
+  "horsingaround.configuration.entityBlacklist.tooltip": "A list of entity ids that are prohibited from being called",
   "horsingaround.configuration.hoverColor": "Hover Color",
   "horsingaround.configuration.hoverColor.tooltip": "The integer color of the radial menu when hovering a slice [Default: 4170175]",
   "horsingaround.configuration.slotsVisible": "Slots Visible",
