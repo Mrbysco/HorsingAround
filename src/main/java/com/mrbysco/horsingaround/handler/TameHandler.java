@@ -4,7 +4,7 @@ import com.mrbysco.horsingaround.HorsingAround;
 import com.mrbysco.horsingaround.config.HorsingConfig;
 import com.mrbysco.horsingaround.data.CallData;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -15,6 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.EntityMountEvent;
 import net.neoforged.neoforge.event.entity.living.AnimalTameEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
 import java.util.List;
@@ -69,17 +70,17 @@ public class TameHandler {
 				event.setCancellationResult(InteractionResult.CONSUME);
 			}
 		}
+	}
 
-		@SubscribeEvent
-		public void onDeath (LivingDeathEvent event){
-			LivingEntity livingEntity = event.getEntity();
-			if (!livingEntity.level().isClientSide()) {
-				if (event.getEntity() instanceof OwnableEntity ownableEntity) {
-					if (ownableEntity.getOwnerReference() != null) {
-						UUID ownerUUID = ownableEntity.getOwnerReference().getUUID();
-						CallData callData = CallData.get(livingEntity.level());
-						callData.removeTamedData(ownerUUID, livingEntity);
-					}
+	@SubscribeEvent
+	public void onDeath(LivingDeathEvent event) {
+		LivingEntity livingEntity = event.getEntity();
+		if (!livingEntity.level().isClientSide()) {
+			if (event.getEntity() instanceof OwnableEntity ownableEntity) {
+				if (ownableEntity.getOwnerReference() != null) {
+					UUID ownerUUID = ownableEntity.getOwnerReference().getUUID();
+					CallData callData = CallData.get(livingEntity.level());
+					callData.removeTamedData(ownerUUID, livingEntity);
 				}
 			}
 		}
@@ -93,7 +94,7 @@ public class TameHandler {
 	 */
 	private static boolean isNotBlacklisted(Entity entity) {
 		List<? extends String> blacklist = HorsingConfig.COMMON.entityBlacklist.get();
-		ResourceLocation entityID = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
-		return !entity.getType().is(HorsingAround.BLACKLIST) || !blacklist.contains(entityID.toString());
+		Identifier entityID = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
+		return !entity.is(HorsingAround.BLACKLIST) || !blacklist.contains(entityID.toString());
 	}
 }

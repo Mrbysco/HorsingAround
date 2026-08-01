@@ -7,7 +7,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.portal.DimensionTransition;
+import net.minecraft.world.level.portal.TeleportTransition;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
@@ -21,7 +21,7 @@ public class CallUtil {
 	 * @param mobUUID      The UUID of the animal to call.
 	 */
 	public static void callAnimal(ServerPlayer serverPlayer, UUID mobUUID) {
-		ServerLevel targetLevel = serverPlayer.serverLevel();
+		ServerLevel targetLevel = serverPlayer.level();
 		CallData callData = CallData.get(targetLevel);
 
 		Entity mob = findEntity(targetLevel.getServer(), mobUUID);
@@ -44,10 +44,10 @@ public class CallUtil {
 			}
 		} else {
 			if (mob.level() != targetLevel) {
-				Entity moved = mob.changeDimension(
-						new DimensionTransition(
+				Entity moved = mob.teleport(
+						new TeleportTransition(
 								targetLevel, serverPlayer.position(), Vec3.ZERO,
-								mob.getYRot(), mob.getXRot(), false, DimensionTransition.DO_NOTHING
+								mob.getYRot(), mob.getXRot(), TeleportTransition.DO_NOTHING
 						)
 				);
 				if (moved != null) {
@@ -63,7 +63,7 @@ public class CallUtil {
 		callData.syncData(serverPlayer.getUUID());
 
 		targetLevel.playSound((Player) null, serverPlayer.blockPosition(), HorsingRegistry.CALL.get(), serverPlayer.getSoundSource(),
-				1.0F, 1.0F + (targetLevel.random.nextFloat() - targetLevel.random.nextFloat()) * 0.4F);
+				1.0F, 1.0F + (targetLevel.getRandom().nextFloat() - targetLevel.getRandom().nextFloat()) * 0.4F);
 	}
 
 	/**
