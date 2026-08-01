@@ -3,6 +3,7 @@ package com.mrbysco.horsingaround.datagen;
 import com.mrbysco.horsingaround.HorsingAround;
 import com.mrbysco.horsingaround.datagen.client.HorsingLanguageProvider;
 import com.mrbysco.horsingaround.datagen.client.HorsingSoundProvider;
+import com.mrbysco.horsingaround.datagen.server.HorsingEntityTypeTagProvider;
 import com.mrbysco.horsingaround.datagen.server.HorsingItemTagProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
@@ -33,6 +34,7 @@ public class HorsingDatagen {
 			};
 			generator.addProvider(true, tagProvider);
 			generator.addProvider(true, new HorsingItemTagProvider(packOutput, lookupProvider, tagProvider, helper));
+			generator.addProvider(true, new HorsingEntityTypeTagProvider(packOutput, lookupProvider, helper));
 		}
 		if (event.includeClient()) {
 			generator.addProvider(true, new HorsingLanguageProvider(packOutput));
