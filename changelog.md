@@ -1,3 +1,3 @@
-* Add pagination to the radial menu allowing you to see more than 20 tamed entities
-* Add client config option `slotsVisible` to control how many slots are visible per page in the radial menu
-* Fix the keybind category translation
+* Add `entityBlacklist` config option for defining entity id's that aren't allowed to be called to the player
+* An Entity Type tag has also been added for the same purpose `horsingaround:blacklist`
+* Adjust how entities are teleported to the player from another dimension No newline at end of file
