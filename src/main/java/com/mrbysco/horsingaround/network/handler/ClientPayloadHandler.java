@@ -55,7 +55,6 @@ public class ClientPayloadHandler {
 							}
 						}
 					}
-					;
 				})
 				.exceptionally(e -> {
 					// Handle exception
