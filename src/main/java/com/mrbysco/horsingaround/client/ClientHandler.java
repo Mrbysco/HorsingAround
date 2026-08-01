@@ -1,18 +1,27 @@
 package com.mrbysco.horsingaround.client;
 
+import com.mrbysco.horsingaround.HorsingAround;
 import com.mrbysco.horsingaround.client.gui.radial_menu.GuiRadialMenu;
+import com.mrbysco.horsingaround.client.layer.SpecialHorseLayer;
 import com.mrbysco.horsingaround.data.CallData;
 import com.mrbysco.horsingaround.mixin.GuiAccessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.entity.HorseRenderer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.context.ContextKey;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
+import net.neoforged.neoforge.client.renderstate.RegisterRenderStateModifiersEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +52,30 @@ public class ClientHandler {
 			int i1 = guiGraphics.guiWidth() / 2 + 91;
 			int j1 = guiGraphics.guiHeight() - gui.rightHeight;
 			((GuiAccessor) gui).invokeExtractFood(guiGraphics, player, j1, i1);
+		}
+	}
+
+	public static final ContextKey<Boolean> GEGY_HORSE = new ContextKey<>(Identifier.fromNamespaceAndPath(HorsingAround.MOD_ID, "gegy_horse"));
+
+	@SubscribeEvent
+	public static void registerCustomRenderData(RegisterRenderStateModifiersEvent event) {
+		event.registerEntityModifier(HorseRenderer.class, (horse, renderState) -> {
+			if (checkMagicName(horse, "Gegy")) {
+				renderState.setRenderData(GEGY_HORSE, true);
+			}
+		});
+	}
+
+	public static boolean checkMagicName(Entity entity, String magicName) {
+		Component customName = entity.getCustomName();
+		return customName != null && magicName.equals(customName.getString());
+	}
+
+	@SubscribeEvent
+	public static void registerAdditionalLayers(EntityRenderersEvent.AddLayers event) {
+		HorseRenderer horseRenderer = event.getRenderer(EntityType.HORSE);
+		if (horseRenderer != null) {
+			horseRenderer.addLayer(new SpecialHorseLayer(horseRenderer));
 		}
 	}
 }

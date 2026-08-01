@@ -1,5 +1,6 @@
 package com.mrbysco.horsingaround.client.gui;
 
+import com.mrbysco.horsingaround.client.ClientHandler;
 import com.mrbysco.horsingaround.client.gui.radial_menu.ClientData;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -23,6 +24,13 @@ public class RenderHelper {
 		float yAngle = (float) Math.toRadians(-15);
 
 		size += 4;
+		tamedEntity.tickCount += 1;
+
+		if (ClientHandler.checkMagicName(tamedEntity, "Gegy")) {
+			long time = System.currentTimeMillis();
+			xAngle = (float) Math.toRadians(120 + ((time / 50L) * 32) % 11520);
+		}
+
 		InventoryScreen.renderEntityInInventoryFollowsAngle(
 				guiGraphics,
 				startX, startY, endX, endY,
