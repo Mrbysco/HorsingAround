@@ -16,8 +16,6 @@ import net.neoforged.neoforge.event.entity.living.AnimalTameEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
-import java.util.UUID;
-
 public class TameHandler {
 
 	@SubscribeEvent
@@ -26,6 +24,7 @@ public class TameHandler {
 			if (event.getEntityMounting() instanceof Player player && !player.level().isClientSide() && HorsingConfig.COMMON.addOnMount.get()) {
 				Entity mountedEntity = event.getEntityBeingMounted();
 				if (mountedEntity instanceof OwnableEntity ownableEntity &&
+						!mountedEntity.getType().is(HorsingAround.BLACKLIST) &&
 						ownableEntity.getOwnerReference() != null && ownableEntity.getOwnerReference().getUUID().equals(player.getUUID())) {
 					CallData callData = CallData.get(player.level());
 					callData.addTamedData(player.getUUID(), mountedEntity);
@@ -39,7 +38,7 @@ public class TameHandler {
 		Player player = event.getTamer();
 		if (event.getTamer() != null && !player.level().isClientSide() && HorsingConfig.COMMON.addOnTame.get()) {
 			Entity tamedAnimal = event.getAnimal();
-			if (tamedAnimal instanceof OwnableEntity) {
+			if (tamedAnimal instanceof OwnableEntity && !tamedAnimal.getType().is(HorsingAround.BLACKLIST)) {
 				CallData callData = CallData.get(player.level());
 				callData.addTamedData(player.getUUID(), tamedAnimal);
 			}
@@ -54,7 +53,8 @@ public class TameHandler {
 			ItemStack stack = event.getItemStack();
 			if (stack.is(HorsingAround.LINKING) && event.getHand() == InteractionHand.MAIN_HAND &&
 					targetEntity instanceof OwnableEntity ownableEntity &&
-					ownableEntity.getOwnerReference() != null && ownableEntity.getOwnerReference().getUUID().equals(player.getUUID())) {
+				!targetEntity.getType().is(HorsingAround.BLACKLIST) &&
+						ownableEntity.getOwnerReference() != null && ownableEntity.getOwnerReference().getUUID().equals(player.getUUID()))
 				CallData callData = CallData.get(player.level());
 				callData.addTamedData(player.getUUID(), targetEntity);
 
@@ -64,20 +64,20 @@ public class TameHandler {
 				event.setCanceled(true);
 				event.setCancellationResult(InteractionResult.CONSUME);
 			}
+			}
 		}
-	}
 
-	@SubscribeEvent
-	public void onDeath(LivingDeathEvent event) {
-		LivingEntity livingEntity = event.getEntity();
-		if (!livingEntity.level().isClientSide()) {
-			if (event.getEntity() instanceof OwnableEntity ownableEntity) {
-				if (ownableEntity.getOwnerReference() != null) {
-					UUID ownerUUID = ownableEntity.getOwnerReference().getUUID();
-					CallData callData = CallData.get(livingEntity.level());
-					callData.removeTamedData(ownerUUID, livingEntity);
+		@SubscribeEvent
+		public void onDeath (LivingDeathEvent event){
+			LivingEntity livingEntity = event.getEntity();
+			if (!livingEntity.level().isClientSide()) {
+				if (event.getEntity() instanceof OwnableEntity ownableEntity) {
+					if (ownableEntity.getOwnerReference() != null) {
+						UUID ownerUUID = ownableEntity.getOwnerReference().getUUID();
+						CallData callData = CallData.get(livingEntity.level());
+						callData.removeTamedData(ownerUUID, livingEntity);
+					}
 				}
 			}
 		}
 	}
-}
