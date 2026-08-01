@@ -6,6 +6,8 @@ import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.List;
+
 public class HorsingConfig {
 
 	public static class Client {
@@ -40,6 +42,7 @@ public class HorsingConfig {
 	public static class Common {
 		public final ModConfigSpec.BooleanValue addOnMount;
 		public final ModConfigSpec.BooleanValue addOnTame;
+		public final ModConfigSpec.ConfigValue<List<? extends String>> entityBlacklist;
 
 		Common(ModConfigSpec.Builder builder) {
 			builder.comment("General settings")
@@ -51,6 +54,9 @@ public class HorsingConfig {
 			addOnTame = builder
 					.comment("Add mountable entities to the call list upon being tamed [Default: false]")
 					.define("addOnTame", false);
+			entityBlacklist = builder
+					.comment("A list of entity ids that are prohibited from being called")
+					.defineListAllowEmpty("entityBlacklist", List::of, () -> "", o -> (o instanceof String));
 
 			builder.pop();
 		}

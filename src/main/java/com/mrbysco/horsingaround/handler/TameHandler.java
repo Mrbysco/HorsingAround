@@ -3,6 +3,8 @@ package com.mrbysco.horsingaround.handler;
 import com.mrbysco.horsingaround.HorsingAround;
 import com.mrbysco.horsingaround.config.HorsingConfig;
 import com.mrbysco.horsingaround.data.CallData;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -16,6 +18,7 @@ import net.neoforged.neoforge.event.entity.living.AnimalTameEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
+import java.util.List;
 import java.util.UUID;
 
 public class TameHandler {
@@ -26,7 +29,7 @@ public class TameHandler {
 			if (event.getEntityMounting() instanceof Player player && !player.level().isClientSide && HorsingConfig.COMMON.addOnMount.get()) {
 				Entity mountedEntity = event.getEntityBeingMounted();
 				if (mountedEntity instanceof OwnableEntity ownableEntity &&
-						!mountedEntity.getType().is(HorsingAround.BLACKLIST) &&
+						isNotBlacklisted(mountedEntity) &&
 						ownableEntity.getOwnerUUID() != null && ownableEntity.getOwnerUUID().equals(player.getUUID())) {
 					CallData callData = CallData.get(player.level());
 					callData.addTamedData(player.getUUID(), mountedEntity);
@@ -40,7 +43,7 @@ public class TameHandler {
 		Player player = event.getTamer();
 		if (event.getTamer() != null && !player.level().isClientSide && HorsingConfig.COMMON.addOnTame.get()) {
 			Entity tamedAnimal = event.getAnimal();
-			if (tamedAnimal instanceof OwnableEntity && !tamedAnimal.getType().is(HorsingAround.BLACKLIST)) {
+			if (tamedAnimal instanceof OwnableEntity && isNotBlacklisted(tamedAnimal)) {
 				CallData callData = CallData.get(player.level());
 				callData.addTamedData(player.getUUID(), tamedAnimal);
 			}
@@ -55,7 +58,7 @@ public class TameHandler {
 			ItemStack stack = event.getItemStack();
 			if (stack.is(HorsingAround.LINKING) && event.getHand() == InteractionHand.MAIN_HAND &&
 					targetEntity instanceof OwnableEntity ownableEntity &&
-					!targetEntity.getType().is(HorsingAround.BLACKLIST) &&
+					isNotBlacklisted(targetEntity) &&
 					ownableEntity.getOwnerUUID() != null && ownableEntity.getOwnerUUID().equals(player.getUUID())) {
 				CallData callData = CallData.get(player.level());
 				callData.addTamedData(player.getUUID(), targetEntity);
@@ -81,5 +84,17 @@ public class TameHandler {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Check if the entity can be tamed
+	 *
+	 * @param entity The entity
+	 * @return If not in the blacklist returns true
+	 */
+	private static boolean isNotBlacklisted(Entity entity) {
+		List<? extends String> blacklist = HorsingConfig.COMMON.entityBlacklist.get();
+		ResourceLocation entityID = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
+		return !entity.getType().is(HorsingAround.BLACKLIST) || !blacklist.contains(entityID.toString());
 	}
 }

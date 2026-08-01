@@ -32,6 +32,7 @@ public class HorsingLanguageProvider extends LanguageProvider {
 		addConfig("General", "General", "General Settings");
 		addConfig("addOnMount", "Add on Mount", "Add tamed mountable entities to the call list upon mounting [Default: false]");
 		addConfig("addOnTame", "Add on Tame", "Add mountable entities to the call list upon being tamed [Default: false]");
+		addConfig("entityBlacklist", "Entity Blacklist", "A list of entity ids that are prohibited from being called");
 
 		addConfig("Client", "Client", "Client Settings");
 		addConfig("hoverColor", "Hover Color", "The integer color of the radial menu when hovering a slice [Default: 4170175]");
