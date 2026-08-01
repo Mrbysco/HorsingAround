@@ -10,7 +10,6 @@ import com.mrbysco.horsingaround.network.PacketHandler;
 import com.mrbysco.horsingaround.registry.HorsingRegistry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
