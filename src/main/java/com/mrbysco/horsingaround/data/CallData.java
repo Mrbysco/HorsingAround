@@ -17,6 +17,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntitySpawnRequest;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
@@ -174,8 +175,9 @@ public class CallData extends SavedData {
 		}
 
 		public Entity createEntity(Level level) {
-			return EntityType.loadEntityRecursive(tag, level, EntitySpawnReason.MOB_SUMMONED, (entity) -> {
+			return EntityType.loadEntityRecursive(tag, level, new EntitySpawnRequest(EntitySpawnReason.MOB_SUMMONED, true), (entity) -> {
 				entity.setUUID(uuid);
+				entity.setId(-1);
 				return entity;
 			});
 		}

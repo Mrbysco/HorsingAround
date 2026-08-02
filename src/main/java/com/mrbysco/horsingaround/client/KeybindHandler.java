@@ -50,7 +50,7 @@ public class KeybindHandler {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.player == null || event.getAction() != 1)
 			return;
-		if (mc.screen == null || mc.screen instanceof GuiRadialMenu<?>) {
+		if (mc.gui.screen() == null || mc.gui.screen() instanceof GuiRadialMenu<?>) {
 			if (event.getKey() == KEY_OPEN_MENU.getKey().getValue() && !KEY_OPEN_MENU.isUnbound()) {
 				List<RadialMenuSlot<ClientData>> slots = new ArrayList<>();
 				List<ClientData> stackList = new ArrayList<>();
@@ -66,7 +66,7 @@ public class KeybindHandler {
 					mc.player.sendSystemMessage(Component.translatable("message.horsingaround.no_tamed_entities"));
 					return;
 				}
-				Minecraft.getInstance().setScreen(new GuiRadialMenu<>(new RadialMenu<>((id) -> {
+				Minecraft.getInstance().setScreenAndShow(new GuiRadialMenu<>(new RadialMenu<>((id) -> {
 							ClientData data = stackList.get(id);
 							if (mc.hasShiftDown()) {
 								//Remove entity from list

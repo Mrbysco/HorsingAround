@@ -51,7 +51,7 @@ public class TameHandler {
 	}
 
 	@SubscribeEvent
-	public void onEntityInteract(PlayerInteractEvent.EntityInteractSpecific event) {
+	public void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
 		Player player = event.getEntity();
 		if (!player.level().isClientSide()) {
 			Entity targetEntity = event.getTarget();

@@ -15,13 +15,13 @@ Insert horse pun: neigh
 [[dependencies.horsingaround]]
 modId="minecraft"
 type="required"
-versionRange="[26.1.1,)"
+versionRange="[26.2,)"
 ordering="NONE"
 side="BOTH"
 [[dependencies.horsingaround]]
 modId="neoforge"
 type="required"
-versionRange="[26.1.1.0-alpha,)"
+versionRange="[26.2.0.43-beta,)"
 ordering="NONE"
 side="BOTH"
 [[mixins]]

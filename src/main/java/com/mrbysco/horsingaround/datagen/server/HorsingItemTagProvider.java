@@ -15,6 +15,6 @@ public class HorsingItemTagProvider extends ItemTagsProvider {
 
 	@Override
 	public void addTags(HolderLookup.Provider lookupProvider) {
-		this.tag(HorsingAround.LINKING).add(Items.GOLDEN_APPLE);
+		this.tag(HorsingAround.LINKING).add(Items.GOLDEN_APPLE.builtInRegistryHolder().key());
 	}
 }

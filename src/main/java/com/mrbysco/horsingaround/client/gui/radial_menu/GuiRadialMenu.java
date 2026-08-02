@@ -87,7 +87,7 @@ public class GuiRadialMenu<T> extends Screen {
 
 	@SubscribeEvent
 	public static void updateInputEvent(MovementInputUpdateEvent event) {
-		if (Minecraft.getInstance().screen instanceof GuiRadialMenu) { //TODO: REDO THIS!!!!
+		if (Minecraft.getInstance().gui.screen() instanceof GuiRadialMenu) { //TODO: REDO THIS!!!!
 			Options settings = Minecraft.getInstance().options;
 
 			Window window = Minecraft.getInstance().getWindow();

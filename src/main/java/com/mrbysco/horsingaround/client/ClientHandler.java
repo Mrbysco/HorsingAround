@@ -4,7 +4,7 @@ import com.mrbysco.horsingaround.HorsingAround;
 import com.mrbysco.horsingaround.client.gui.radial_menu.GuiRadialMenu;
 import com.mrbysco.horsingaround.client.layer.SpecialHorseLayer;
 import com.mrbysco.horsingaround.data.CallData;
-import com.mrbysco.horsingaround.mixin.GuiAccessor;
+import com.mrbysco.horsingaround.mixin.HudAccessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -13,7 +13,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.context.ContextKey;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -32,7 +32,7 @@ public class ClientHandler {
 
 	@SubscribeEvent
 	public static void onRenderOverlayPre(RenderGuiLayerEvent.Pre event) {
-		if (Minecraft.getInstance().screen instanceof GuiRadialMenu<?> && event.getName().equals(VanillaGuiLayers.CROSSHAIR)) {
+		if (Minecraft.getInstance().gui.screen() instanceof GuiRadialMenu<?> && event.getName().equals(VanillaGuiLayers.CROSSHAIR)) {
 			event.setCanceled(true);
 		}
 	}
@@ -48,10 +48,10 @@ public class ClientHandler {
 		GuiGraphicsExtractor guiGraphics = event.getGuiGraphics();
 		Entity vehicle = player.getVehicle();
 		boolean isMounted = vehicle != null && vehicle.showVehicleHealth();
-		if (isMounted && !mc.options.hideGui) {
+		if (isMounted && !gui.hud.isHidden()) {
 			int i1 = guiGraphics.guiWidth() / 2 + 91;
-			int j1 = guiGraphics.guiHeight() - gui.rightHeight;
-			((GuiAccessor) gui).invokeExtractFood(guiGraphics, player, j1, i1);
+			int j1 = guiGraphics.guiHeight() - gui.hud.rightHeight;
+			((HudAccessor) gui.hud).invokeExtractFood(guiGraphics, player, j1, i1);
 		}
 	}
 
@@ -73,7 +73,7 @@ public class ClientHandler {
 
 	@SubscribeEvent
 	public static void registerAdditionalLayers(EntityRenderersEvent.AddLayers event) {
-		HorseRenderer horseRenderer = event.getRenderer(EntityType.HORSE);
+		HorseRenderer horseRenderer = event.getRenderer(EntityTypes.HORSE);
 		if (horseRenderer != null) {
 			horseRenderer.addLayer(new SpecialHorseLayer(horseRenderer));
 		}

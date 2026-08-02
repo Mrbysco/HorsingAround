@@ -5,7 +5,7 @@
   "package": "com.mrbysco.horsingaround.mixin",
   "target": "@env(DEFAULT)",
   "client": [
-	"GuiAccessor"
+    "HudAccessor"
   ],
   "injectors": {
 	"defaultRequire": 1
