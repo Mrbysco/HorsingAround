@@ -1,1 +1,1 @@
-* Update to 26.2
+* Add missing null check to make sure a dying tamed mob doesn't cause a crash
