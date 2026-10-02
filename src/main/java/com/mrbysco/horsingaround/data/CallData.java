@@ -82,6 +82,8 @@ public class CallData extends SavedData {
 
 	public void removeTamedData(UUID playerUUID, UUID entityUUID) {
 		List<TamedData> tamedDataList = playerTamedMap.get(playerUUID);
+		if (tamedDataList == null) return;
+
 		tamedDataList.removeIf(tamedData -> tamedData.uuid().equals(entityUUID));
 
 		//Sync data to client
