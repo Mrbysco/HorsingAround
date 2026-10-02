@@ -1,5 +1,6 @@
 package com.mrbysco.horsingaround.client;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mrbysco.horsingaround.HorsingAround;
 import com.mrbysco.horsingaround.client.gui.RenderHelper;
 import com.mrbysco.horsingaround.client.gui.radial_menu.ClientData;
@@ -22,7 +23,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,7 @@ import java.util.List;
 @EventBusSubscriber(Dist.CLIENT)
 public class KeybindHandler {
 	public static KeyMapping KEY_OPEN_MENU = new KeyMapping(
-			getKey("open_menu"), GLFW.GLFW_KEY_X, getCategory("category"));
+			getKey("open_menu"), InputConstants.KEY_X, getCategory("category"));
 
 	private static String getKey(String name) {
 		return String.join(".", "key", HorsingAround.MOD_ID, name);

@@ -32,7 +32,7 @@ public class HorsingAround {
 	public static final TagKey<EntityType<?>> BLACKLIST = TagKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(MOD_ID, "blacklist"));
 
 	public HorsingAround(IEventBus eventBus, Dist dist, ModContainer container) {
-		container.registerConfig(ModConfig.Type.COMMON, HorsingConfig.commonSpec);
+		container.registerConfig(ModConfig.Type.LOCAL, HorsingConfig.commonSpec);
 		eventBus.register(HorsingConfig.class);
 
 		HorsingRegistry.SOUND_EVENTS.register(eventBus);

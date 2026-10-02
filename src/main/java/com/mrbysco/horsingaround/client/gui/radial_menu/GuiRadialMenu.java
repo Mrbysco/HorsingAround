@@ -1,7 +1,6 @@
 package com.mrbysco.horsingaround.client.gui.radial_menu;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.platform.Window;
 import com.mrbysco.horsingaround.config.HorsingConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
@@ -90,14 +89,13 @@ public class GuiRadialMenu<T> extends Screen {
 		if (Minecraft.getInstance().gui.screen() instanceof GuiRadialMenu) { //TODO: REDO THIS!!!!
 			Options settings = Minecraft.getInstance().options;
 
-			Window window = Minecraft.getInstance().getWindow();
-			boolean up = InputConstants.isKeyDown(window, settings.keyUp.getKey().getValue());
-			boolean down = InputConstants.isKeyDown(window, settings.keyDown.getKey().getValue());
-			boolean left = InputConstants.isKeyDown(window, settings.keyLeft.getKey().getValue());
-			boolean right = InputConstants.isKeyDown(window, settings.keyRight.getKey().getValue());
-			boolean jumping = InputConstants.isKeyDown(window, settings.keyJump.getKey().getValue());
-			boolean shift = InputConstants.isKeyDown(window, settings.keyShift.getKey().getValue());
-			boolean sprint = InputConstants.isKeyDown(window, settings.keySprint.getKey().getValue());
+			boolean up = InputConstants.isKeyDown(settings.keyUp.getKey().getValue());
+			boolean down = InputConstants.isKeyDown(settings.keyDown.getKey().getValue());
+			boolean left = InputConstants.isKeyDown(settings.keyLeft.getKey().getValue());
+			boolean right = InputConstants.isKeyDown(settings.keyRight.getKey().getValue());
+			boolean jumping = InputConstants.isKeyDown(settings.keyJump.getKey().getValue());
+			boolean shift = InputConstants.isKeyDown(settings.keyShift.getKey().getValue());
+			boolean sprint = InputConstants.isKeyDown(settings.keySprint.getKey().getValue());
 
 			ClientInput clientInput = event.getInput();
 			clientInput.keyPresses = new Input(
