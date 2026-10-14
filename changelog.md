@@ -1,1 +1,1 @@
-* Update to 26.3
+* Fix crash when a tamed mob dies after a server restart (Courtesy of [Saereth](https://github.com/Mrbysco/HorsingAround/pull/7))
