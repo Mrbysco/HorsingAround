@@ -1,1 +1,1 @@
-* Add missing null check to make sure a dying tamed mob doesn't cause a crash
+* Fix crash when a tamed mob dies after a server restart (Courtesy of [Saereth](https://github.com/Mrbysco/HorsingAround/pull/7))
