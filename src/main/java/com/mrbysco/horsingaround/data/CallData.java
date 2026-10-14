@@ -47,7 +47,8 @@ public class CallData extends SavedData {
 	}
 
 	public CallData(Map<UUID, List<TamedData>> infoMap) {
-		this.playerTamedMap = Maps.newHashMap(infoMap);
+		this.playerTamedMap = Maps.newHashMap();
+		infoMap.forEach((playerUUID, tamedList) -> this.playerTamedMap.put(playerUUID, new ArrayList<>(tamedList)));
 	}
 
 	public void addTamedData(UUID playerUUID, Entity entity) {
